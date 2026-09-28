@@ -18,20 +18,31 @@ This contract sets out shared expectations and commitments for how our team will
 
 ### Communication
 
-* Which platform will you use for communication outside of class, when required for work on your course project? (Examples: Text message, Discord, WeChat, etc.)
+* We will use WhatsApp as our primary communication channel
 
-* Each teammate agrees to respond to messages in at most how long? 1 day? 2 days? Some other amount of time? 
+* If you are directly messaged (pinged), you must respond within 24 hours
 
+* A teammate should notify everyone about anything related to the completion of the project
+  * e.g. notify people if you won't be able to meet a deadline, if you need help
+ 
 * What things should a teammate notify you about? (Examples: if they think they won't be able to meet a deadline, if they have to miss lecture, etc.)
+
+* Don't ignore messages
+
+* Be kind
 
 * Respectful and inclusive behaviour are necessary for smooth and productive communication. What are some respectful and inclusive behaviours you expect when communicating with each other during lectures, labs, or outside of class? (Examples: Actively listening to each team members ideas, giving everyone a chance to meaningfully contribute, etc.)
 
+* Provide an update after each completing a major part of your task
 ---
 
-### [Other Categories of norms and expectations go here]
+### Other Categories of norms and expectations
 
-* Based on your previous teamwork experiences, what other behaviours do you agree upon as a team?
-    - some examples of possible additional team norms and expectations are included in the sample team contract in case your team needs some help getting ideas for what else you want to include.
+* Try to be on time to tutorials
+
+* Come to all tutorials after reading week (they are graded)
+
+* Be punctual with deadlines
 
 ---
 
