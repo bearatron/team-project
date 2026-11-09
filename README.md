@@ -15,12 +15,11 @@ at the end of the term.
 ## Team Information
 
 ### Team Members
-- Name
-- Name
-- Name
-- Name
-- Name
-- Name
+- Ethan Diep
+- Clelia Troisi
+- Gilbert Lauridsen
+- Joshua
+- Soham
 
 ---
 
