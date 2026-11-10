@@ -70,9 +70,23 @@ Google Maps for UofT food spots on campus
 - As a user, I want to view a truck’s name, cuisine, price range, and menu, so that I can decide whether to go.
 
 ### Reviews
+- As a user, I want to rate a truck out of 5, so that I can share my overall experience.
+- As a user, I want to optionally write about my experience, so that I can explain my rating.
+- As a user, I want to optionally include images with my review, so that I can show what I got.
+- As a user, I want to rate specific aspects of a truck (e.g. cleanliness, service, food quality, speed), so that my feedback is more detailed.
+- As a user, I want to view a truck’s reviews ordered by a specific aspect, so that I can focus on what matters most to me.
+- As a user, I want to edit or delete my own reviews, so that I can correct or remove them.
+- As a user, I want a summary of a truck’s reviews, so that I can understand what people think without reading them all.
 
-- 
+### Owners
+- As an owner, I want to update where my truck is, so that customers can find me when I move.
+- As an owner, I want to change how my truck is categorized, so that it shows up for the right customers.
+- As an owner, I want to manage my menu, so that customers see accurate offerings and prices. 
+- As an owner, I want to manage my truck’s photos, so that customers can see what I offer.
 
+### Stretch
+- As an owner, I want to specify food restrictions my items accommodate, so that customers with dietary needs can find suitable options. 
+- As a user, I want to see which food restrictions an item accommodates, so that I know what I can eat.
 
 ---
 
@@ -100,11 +114,14 @@ Google Maps for UofT food spots on campus
 
 ## Entities
 
-### Entity 1
-
-### Entity 2
-
-(Add additional entities as needed.)
+- Review
+- FoodTruck
+- Menu
+- MenuItem
+- Location
+- CuisineType
+- Ratings
+- User
 
 ---
 
