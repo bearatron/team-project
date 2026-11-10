@@ -92,11 +92,13 @@ Google Maps for UofT food spots on campus
 
 ## Use Cases
 
-### Use Case 1
+### Login/logout
+- PAs: user or owner
+- Trigger: submit button on login form
 
-### Use Case 2
-
-### Use Case 3
+### Viewing food trucks on a map
+- PAs: user or owner
+- Trigger: 
 
 (Add additional use cases as needed.)
 
