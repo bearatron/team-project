@@ -92,13 +92,43 @@ Google Maps for UofT food spots on campus
 
 ## Use Cases
 
-### Login/logout
+### Login
 - PAs: user or owner
 - Trigger: submit button on login form
+- users or owners log in depending on the account
+- input data
+  - username, password
+- result
+  - view model updated with user
 
-### Viewing food trucks on a map
+### Logout
+
+### Sign up
+
+### Get food trucks
 - PAs: user or owner
-- Trigger: 
+- Trigger:
+- get each food truck's location and display them as pins on the map
+
+### Show food truck details
+- show food truck details (once a pin is clicked)
+
+### View a food truck's reviews
+- also allow them to be sorted by a rating category
+
+### Generate summary of reviews
+- generate LLM summary of food truck reviews
+- only if there are a sufficient number of reviews
+- only generate a new summary if there are x new reviews since previous summary was generated (prevent too many API calls)
+
+### Write review
+- user can write a review with fields specified in [entities](#entities)
+
+### Reply to review (owner)
+- an owner can reply to a review and it should be indicated in the UI that they are the owner
+
+### Update food truck details (owner)
+- a food truck owner can update any field defined in FoodTruck in [entities](#entities)
 
 (Add additional use cases as needed.)
 
@@ -116,14 +146,33 @@ Google Maps for UofT food spots on campus
 
 ## Entities
 
+- Rating
+   - category: String (service, food quality, value for money, waiting time)
+   - num: int (1-5)
+- WaitingTimeRating (extends Rating class)
+  - 1-5 scale with labels: e.g. 1 = "20+ min", 3 = "about 10 min", 5 = "under 5 min"
 - Review
+   - ratings: List\<Rating\> (or make each rating category mandatory and list them out individually?)
+   - text: String (optional)
+   - photos: image (optional)
 - FoodTruck
+  - owner: User (with type owner, or null if no owner associated with it)
+  - location: Location
+  - reviews: List\<Review\>
+  - cuisineType: CuisineType (or list of cuisine types?, or String?)
+  - menu: Menu
 - Menu
+  - List\<MenuItem\>
 - MenuItem
+  - description: String
+  - price: float (2 decimals)
 - Location
+  - latitude/longitude coordinates
 - CuisineType
-- Ratings
 - User
+   - type: int (a constant representing owner or normal user)
+   - username: String
+   - password: String
 
 ---
 
