@@ -58,7 +58,7 @@ Google Maps for UofT food spots on campus
     - gather all menus and filter (preference, price)
 7. user's list of favourite food trucks
 
-## entities.User Stories
+## User Stories
 
 ### Authentication
 - As a new user, I want to create an account with a username and password, so that I can review trucks and save favourites.
@@ -128,7 +128,7 @@ Google Maps for UofT food spots on campus
 - an owner can reply to a review and it should be indicated in the UI that they are the owner
 
 ### Update food truck details (owner)
-- a food truck owner can update any field defined in entities.FoodTruck in [entities](#entities)
+- a food truck owner can update any field defined in FoodTruck in [entities](#entities)
 
 (Add additional use cases as needed.)
 
@@ -146,30 +146,29 @@ Google Maps for UofT food spots on campus
 
 ## Entities
 
-- entities.Rating
+- Rating
    - category: String (service, food quality, value for money, waiting time)
    - num: int (1-5)
-- WaitingTimeRating (extends entities.Rating class)
+- WaitingTimeRating (extends Rating class)
   - 1-5 scale with labels: e.g. 1 = "20+ min", 3 = "about 10 min", 5 = "under 5 min"
-- entities.Review
-   - ratings: List\<entities.Rating\> (or make each rating category mandatory and list them out individually?)
+- Review
+   - ratings: List\<Rating\> (or make each rating category mandatory and list them out individually?)
    - text: String (optional)
    - photos: image (optional)
-- entities.FoodTruck
-  - owner: entities.User (with type owner, or null if no owner associated with it)
-  - location: entities.Location
-  - reviews: List\<entities.Review\>
-  - cuisineType: entities.CuisineType (or list of cuisine types?, or String?)
+- FoodTruck
+  - owner: User (with type owner, or null if no owner associated with it)
+  - location: Location
+  - reviews: List\<Review\>
+  - cuisineType: CuisineType (or list of cuisine types?, or String?)
   - menu: Menu
 - Menu
-  - List\<entities.MenuItem\>
-- entities.MenuItem
+  - List\<MenuItem\>
+- MenuItem
   - description: String
   - price: float (2 decimals)
-- entities.Location
+- Location
   - latitude/longitude coordinates
-- entities.CuisineType
-- entities.User
+- User
    - type: int (a constant representing owner or normal user)
    - username: String
    - password: String
