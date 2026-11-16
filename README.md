@@ -177,11 +177,13 @@ Google Maps for UofT food spots on campus
 
 ## API Usage
 
-**API Name:**
-
-**Documentation:** [Link]
-
-**How it is used in the program:**
+1. Custom API
+   - food truck location data
+2. Gemini API 
+   - food truck review summaries
+   - docs: https://aistudio.google.com/docs
+3. Google Maps API
+   - prepopulate reviews using Google's review data
 
 ---
 

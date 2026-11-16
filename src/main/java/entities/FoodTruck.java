@@ -1,3 +1,7 @@
 package entities;
 
-public class FoodTruck { }
+public class FoodTruck {
+    User owner;
+    Location location;
+
+}
