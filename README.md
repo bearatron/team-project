@@ -168,7 +168,6 @@ Google Maps for UofT food spots on campus
   - price: float (2 decimals)
 - Location
   - latitude/longitude coordinates
-- CuisineType
 - User
    - type: int (a constant representing owner or normal user)
    - username: String
