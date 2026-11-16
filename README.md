@@ -152,7 +152,7 @@ Google Maps for UofT food spots on campus
    - category: String (overall, service, food quality, value for money, waiting time)
    - num: int (1-5)
 - Review
-   - ratings: List\<Rating\> (or make each rating category mandatory and list them out individually?)
+   - ratings: List\<Rating\> (list of length 4, each element being one of the categories above)
    - text: String (optional)
    - photos: image (optional)
 - FoodTruck
