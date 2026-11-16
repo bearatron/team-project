@@ -179,30 +179,48 @@ Photo upload
 
 ## Entities
 
-- Rating
-   - category: String (overall, service, food quality, value for money)
-   - num: int (1-5)
-- Review
-   - ratings: List\<Rating\> (list of length 4, each element being one of the categories above)
-   - text: String (optional)
-   - photos: image (optional)
-- FoodTruck
-  - owner: User (with type owner, or null if no owner associated with it)
-  - location: Location
-  - reviews: List\<Review\>
-  - cuisineType: List\<String\>
-  - menu: Menu
-- Menu
-  - List\<MenuItem\>
-- MenuItem
-  - description: String
-  - price: float (2 decimals)
-- Location
-  - latitude/longitude coordinates
+- Category (enum)
+    - `OVERALL`, `SERVICE`, `FOOD_QUALITY`, `VALUE_FOR_MONEY`
+- UserType (enum)
+    - `REVIEWER`, `OWNER`
+- PriceRange
+    - start: BigDecimal (2 decimal places)
+    - end: BigDecimal (2 decimal places)
+- Image
+    - path: String
 - User
-   - type: int (a constant representing owner or normal user)
-   - username: String
-   - password: String
+    - type: UserType
+    - username: String (unique)
+    - password: String
+- FoodTruck
+    - name: String
+    - owner: User (type `OWNER`, non-null)
+    - location: Location
+    - cuisineType: List\<String\>
+    - priceRange: PriceRange
+    - photos: List\<Image\>
+    - menu: List\<MenuItem\>
+    - reviews: List\<Review\>
+- Location
+    - latitude: double within [-90, 90]
+    - longitude: double within [-180, 180]
+- MenuItem
+    - name: String
+    - description: String 
+    - price: BigDecimal (2 decimal places)
+- Review
+    - author: User (type `REVIEWER`; `null` if imported from Google Maps)
+    - authorDisplayName: String (used for imported reviews)
+    - source: enum (`APP`, `GOOGLE_MAPS`)
+    - ratings: Map\<Category, Integer\> (each value in [1, 5], one entry per category)
+    - text: String (optional)
+    - photos: List\<Image\> (optional, may be empty)
+    - reply: Reply (optional, at most one)
+    - timestamp: LocalDateTime (from `java.time` package)
+- Reply
+    - text: String
+    - timestamp: LocalDateTime (from `java.time` package)
+    - *(note: the author is always the owner of the review’s truck, so no author field is needed)*
 
 ---
 
