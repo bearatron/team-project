@@ -46,7 +46,7 @@ Google Maps for UofT food spots on campus
 6. summarize a food trucks' reviews (LLM api)
 7. food truck owners can change their store's location on the map
 8. food truck owners can change their filters (cuisine type, price range)
-9. food truck's menu, photos, food restrictions
+9. food truck's menu, photos
 
 ### Stretch
 1. view most active/popular users based on reviewers
@@ -57,6 +57,8 @@ Google Maps for UofT food spots on campus
 6. search for a food you want
     - gather all menus and filter (preference, price)
 7. user's list of favourite food trucks
+8. ratings out of half stars
+9. food restrictions on food trucks
 
 ## User Stories
 
@@ -147,10 +149,8 @@ Google Maps for UofT food spots on campus
 ## Entities
 
 - Rating
-   - category: String (service, food quality, value for money, waiting time)
+   - category: String (overall, service, food quality, value for money, waiting time)
    - num: int (1-5)
-- WaitingTimeRating (extends Rating class)
-  - 1-5 scale with labels: e.g. 1 = "20+ min", 3 = "about 10 min", 5 = "under 5 min"
 - Review
    - ratings: List\<Rating\> (or make each rating category mandatory and list them out individually?)
    - text: String (optional)
@@ -159,7 +159,7 @@ Google Maps for UofT food spots on campus
   - owner: User (with type owner, or null if no owner associated with it)
   - location: Location
   - reviews: List\<Review\>
-  - cuisineType: CuisineType (or list of cuisine types?, or String?)
+  - cuisineType: List\<String\>
   - menu: Menu
 - Menu
   - List\<MenuItem\>
