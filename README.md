@@ -27,7 +27,7 @@ at the end of the term.
 
 ### Domain
 
-Google Maps for UofT food spots on campus
+Google Maps for food trucks on the UofT St. George campus
 
 ---
 
@@ -51,7 +51,7 @@ Informal list of features. Details specified in [user stories](#user-stories) an
 7. food truck owners can change their store's location on the map
 8. food truck owners can change their filters (cuisine type, price range)
 9. food truck owners can reply to reviews
-10. import reviews from Google Maps API
+10. food truck owners can import reviews from Google Maps API
 
 ### Stretch
 1. view most active/popular users based on reviewers
