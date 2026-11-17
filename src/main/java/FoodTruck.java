@@ -25,6 +25,7 @@ public class FoodTruck {
         menu.add(new MenuItem(itemName, price, description));
     }
 
+
     public void addReview(Review review) {
         reviews.add(review);
     }
