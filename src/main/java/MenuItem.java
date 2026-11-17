@@ -20,3 +20,4 @@ public class MenuItem {
         return String.format("%-20s $%6.2f", name, price);
     }
 }
+
