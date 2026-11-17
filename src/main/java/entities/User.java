@@ -10,6 +10,17 @@ public class User {
     private UserType userType;
 
     /**
+     * Creates a new user with the given username and type.
+     *
+     * @param username the user's username
+     * @param userType the user's user type
+     */
+    public User(String username, UserType userType)  {
+        this.username = username;
+        this.userType = userType;
+    }
+
+    /**
      * Return the user's username
      *
      * @return the username of the user
