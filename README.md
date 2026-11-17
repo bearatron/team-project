@@ -192,9 +192,9 @@ Photo upload
     - type: UserType
     - username: String (unique)
     - password: String
+    - *note: there is a one-to-one relationship between FoodTruck and User (with type `OWNER` or `null`), but this will be encoded in the database*
 - FoodTruck
     - name: String
-    - owner: User (type `OWNER`, non-null)
     - location: Location
     - cuisineType: List\<String\>
     - priceRange: PriceRange
@@ -220,7 +220,7 @@ Photo upload
 - Reply
     - text: String
     - timestamp: LocalDateTime (from `java.time` package)
-    - *(note: the author is always the owner of the review’s truck, so no author field is needed)*
+    - *note: the author is always the owner of the review’s truck, so no author field is needed*
 
 ---
 
