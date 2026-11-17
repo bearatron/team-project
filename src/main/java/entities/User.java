@@ -2,6 +2,9 @@ package entities;
 
 import java.util.Objects;
 
+/**
+ * Represents a user of the application.
+ */
 public class User {
     private String username;
     private UserType userType;
