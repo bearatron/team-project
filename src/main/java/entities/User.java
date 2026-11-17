@@ -6,8 +6,8 @@ import java.util.Objects;
  * Represents a user of the application.
  */
 public class User {
-    private String username;
-    private UserType userType;
+    private final String username;
+    private final UserType userType;
 
     /**
      * Creates a new user with the given username and type.
