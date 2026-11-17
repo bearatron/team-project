@@ -27,26 +27,31 @@ at the end of the term.
 
 ### Domain
 
-Google Maps for UofT food spots on campus
+Google Maps for food trucks on the UofT St. George campus
 
 ---
 
 ## Features
 
-### Required
-1. log in/log out - normal user or food truck owner
-2. register - account creation
+Informal list of features. Details specified in [user stories](#user-stories) and [use cases](#use-cases).
+
+### Required (MVP)
+1. log in/log out - reviewer or food truck owner
+2. sign up - account creation
+    - a food truck is automatically associated with an owner account when it is made
 3. see where food trucks are on a map and pick one to view info
-4. view details of a food truck: name, cuisine, price range, menu, rating, reviews
-5. post a review to a food truck with rating or images
+    - custom API for location of food trucks
+4. view details of a food truck: name, cuisine, price range, menu, images, reviews
+5. view summary of a food truck's reviews (LLM api)
+6. post a review to a food truck with rating or images
     - rating out of 5
     - optional written review
-    - sections: cleanliness, service, food quality, speed, etc?
-    - sort reviews by sections
-6. summarize a food trucks' reviews (LLM api)
+    - categories: overall, service, food quality, value for money
+    - sort reviews by rating category
 7. food truck owners can change their store's location on the map
 8. food truck owners can change their filters (cuisine type, price range)
-9. food truck's menu, photos
+9. food truck owners can reply to reviews
+10. food truck owners can import reviews from Google Maps API
 
 ### Stretch
 1. view most active/popular users based on reviewers
@@ -59,36 +64,62 @@ Google Maps for UofT food spots on campus
 7. user's list of favourite food trucks
 8. ratings out of half stars
 9. food restrictions on food trucks
+10. edit or delete reviews (reviewers) or replies (owners)
 
 ## User Stories
+- a "user" is anyone using the app, whether or not they are logged in.
+- a "reviewer" is a user logged in to a reviewer account.
+    - can post their own reviews
+- an "owner" is a user logged in to an owner account
+    - can register and manage a food truck
+    - can reply to reviews on their food truck
+    - cannot post reviews
+- every account is either a reviewer or an owner account and can never be both
+
+MVP user stories listed below
 
 ### Authentication
-- As a new user, I want to create an account with a username and password, so that I can review trucks and save favourites.
-- As a new owner, I want to create an owner account and register my food truck, so that I can manage it.
-- As a user or owner, I want to log in with my credentials, so that I can access my account and data.
+- Sign up (new reviewer): As a new reviewer, I want to create an account, so I can review food trucks.
+- Sign up (new owner): As a new food truck owner, I want to create an owner account, so I can register and manage my food truck.
+- Login: As a reviewer or owner, I want to log in, so I can access my account and data.
+- Logout: As a reviewer or owner, I want to log out, so my account stays secure on shared devices.
 
-### Map and Details
-- As a user, I want to see food trucks as markers on a map, so that I can find what’s near me.
-- As a user, I want to view a truck’s name, cuisine, price range, and menu, so that I can decide whether to go.
+### Map and Food Truck Overview
+- As a user, I want to see food trucks on a map of campus, so I can find one close to where I am. 
+- As a user, I want to view a food truck's details, so I can decide whether to go there.
 
 ### Reviews
-- As a user, I want to rate a truck out of 5, so that I can share my overall experience.
-- As a user, I want to optionally write about my experience, so that I can explain my rating.
-- As a user, I want to optionally include images with my review, so that I can show what I got.
-- As a user, I want to rate specific aspects of a truck (e.g. cleanliness, service, food quality, speed), so that my feedback is more detailed.
-- As a user, I want to view a truck’s reviews ordered by a specific aspect, so that I can focus on what matters most to me.
-- As a user, I want to edit or delete my own reviews, so that I can correct or remove them.
-- As a user, I want a summary of a truck’s reviews, so that I can understand what people think without reading them all.
+
+Writing and editing reviews
+- As a reviewer, I want to review a food truck, so other users can learn from my experience.
+- As a reviewer, I want to attach images to my review, so I can show what I ordered.
+- As a reviewer, I want to rate a food truck in specific rating categories, so my feedback is more detailed.
+- (stretch): As a reviewer, I want to edit my review, so I can correct it.
+- (stretch): As a reviewer, I want to delete my review, so I can remove it.
+
+Viewing reviews
+- As a user, I want to view a food truck's reviews, so I can see what other people think.
+- As a user, I want to sort a food truck's reviews by a specific rating category, so I can focus on what matters most to me.
+- As a user, I want to see a summary of a food truck's reviews, so I can understand what people think without reading them all.
 
 ### Owners
-- As an owner, I want to update where my truck is, so that customers can find me when I move.
-- As an owner, I want to change how my truck is categorized, so that it shows up for the right customers.
-- As an owner, I want to manage my menu, so that customers see accurate offerings and prices. 
-- As an owner, I want to manage my truck’s photos, so that customers can see what I offer.
+- As an owner, I want to update my truck's location, so users can find me when I move.
+- As an owner, I want to edit my truck's cuisine and price range, so users see accurate information about my food truck.
+- As an owner, I want to import my truck's Google Maps reviews, so my page has reviews from the start.
 
-### Stretch
-- As an owner, I want to specify food restrictions my items accommodate, so that customers with dietary needs can find suitable options. 
-- As a user, I want to see which food restrictions an item accommodates, so that I know what I can eat.
+Replying to reviews
+- As an owner, I want to reply to a review of my truck, so I can respond to feedback and show users I’m engaged.
+- (stretch): As an owner, I want to edit my reply to a review, so I can correct or update my response.
+- (stretch): As an owner, I want to delete my reply to a review, so I can remove a response I no longer want to show.
+
+Menu
+- As an owner, I want to add items to my menu, so users can see what I offer and what it costs.
+- As an owner, I want to edit a menu item, so my menu and prices stay accurate.
+- As an owner, I want to remove a menu item, so users don’t see things I no longer sell.
+
+Photo upload
+- As an owner, I want to upload photos of my truck, so users can see what I offer.
+- As an owner, I want to remove a photo of my truck, so users only see current photos.
 
 ---
 
@@ -148,41 +179,62 @@ Google Maps for UofT food spots on campus
 
 ## Entities
 
-- Rating
-   - category: String (overall, service, food quality, value for money, waiting time)
-   - num: int (1-5)
-- Review
-   - ratings: List\<Rating\> (list of length 4, each element being one of the categories above)
-   - text: String (optional)
-   - photos: image (optional)
-- FoodTruck
-  - owner: User (with type owner, or null if no owner associated with it)
-  - location: Location
-  - reviews: List\<Review\>
-  - cuisineType: List\<String\>
-  - menu: Menu
-- Menu
-  - List\<MenuItem\>
-- MenuItem
-  - description: String
-  - price: float (2 decimals)
-- Location
-  - latitude/longitude coordinates
+- Category (enum)
+    - `OVERALL`, `SERVICE`, `FOOD_QUALITY`, `VALUE_FOR_MONEY`
+- UserType (enum)
+    - `REVIEWER`, `OWNER`
+- PriceRange
+    - start: BigDecimal (2 decimal places)
+    - end: BigDecimal (2 decimal places)
+- Image
+    - path: String
 - User
-   - type: int (a constant representing owner or normal user)
-   - username: String
-   - password: String
+    - type: UserType
+    - username: String (unique)
+    - password: String
+    - *note: there is a one-to-one relationship between FoodTruck and User (with type `OWNER` or `null`), but this will be encoded in the database*
+- FoodTruck
+    - name: String
+    - location: Location
+    - cuisineType: List\<String\>
+    - priceRange: PriceRange
+    - photos: List\<Image\>
+    - menu: List\<MenuItem\>
+    - reviews: List\<Review\>
+- Location
+    - latitude: double within [-90, 90]
+    - longitude: double within [-180, 180]
+- MenuItem
+    - name: String
+    - description: String 
+    - price: BigDecimal (2 decimal places)
+- Review
+    - author: User (type `REVIEWER`; `null` if imported from Google Maps)
+    - authorDisplayName: String (used for imported reviews)
+    - source: enum (`APP`, `GOOGLE_MAPS`)
+    - ratings: Map\<Category, Integer\> (each value in [1, 5], one entry per category)
+    - text: String (optional)
+    - photos: List\<Image\> (optional, may be empty)
+    - reply: Reply (optional, at most one)
+    - timestamp: LocalDateTime (from `java.time` package)
+- Reply
+    - text: String
+    - timestamp: LocalDateTime (from `java.time` package)
+    - *note: the author is always the owner of the review’s truck, so no author field is needed*
 
 ---
 
 ## API Usage
 
-**API Name:**
-
-**Documentation:** [Link]
-
-**How it is used in the program:**
-
+1. Custom API
+   - food truck location data
+2. Gemini API 
+   - food truck review summaries
+   - [docs](https://aistudio.google.com/docs)
+3. Google Maps API
+   - prepopulate reviews using Google's review data
+   - note: only a maximum 5 reviews can be returned
+   - [docs](https://developers.google.com/maps/documentation/places/web-service/reference/rest/v1/places)
 ---
 
 ## Design Diagrams
