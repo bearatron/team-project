@@ -6,7 +6,7 @@
 ## Testing
 - [ ] relevant JUnit tests added or updated
 - [ ] `mvn test` passes locally
-- [ ] no Checkstyle warnings locally
+- [ ] `mvn checkstyle:check` passes locally (no Checkstyle warnings)
 
 ## Checklist
 
@@ -15,4 +15,4 @@
     - Check that all files changed are intentional changes
     - Check that all changes are relevant to the issue(s) referenced
 - [ ] I have verified that the PR checks have passed
-- [ ] I have requested review from a team member
+- [ ] I have requested a review from a team member
