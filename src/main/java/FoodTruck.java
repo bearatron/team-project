@@ -62,11 +62,4 @@ public class FoodTruck {
     public List<MenuItem> getMenu() {
         return menu;
     }
-
-    public void printMenu() {
-        System.out.println("=== " + name + " (" + location + ") ===");
-        for (MenuItem item : menu) {
-            System.out.println(item);
-        }
-    }
 }
