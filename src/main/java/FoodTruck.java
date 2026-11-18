@@ -22,10 +22,9 @@ public class FoodTruck {
         this.photos = new ArrayList<>(photos);
     }
 
-    public void addItem(String itemName, BigDecimal price, String description) {
-        menu.add(new MenuItem(itemName, price, description));
+    public void addItem(MenuItem item) {
+        menu.add(item);
     }
-
 
     public void addReview(Review review) {
         reviews.add(review);
