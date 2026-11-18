@@ -31,6 +31,9 @@ public class FoodTruck {
     }
 
     public PriceRange getPriceRange() {
+        if (menu.isEmpty()) {
+            return null;
+        }
         BigDecimal min = menu.stream().map(MenuItem::getPrice)
                 .min(Comparator.naturalOrder()).orElse(BigDecimal.ZERO);
         BigDecimal max = menu.stream().map(MenuItem::getPrice)
