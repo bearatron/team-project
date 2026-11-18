@@ -39,9 +39,9 @@ public class User {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (o == null || getClass() != o.getClass()) return false;
-        User user = (User) o;
+    public boolean equals(Object object) {
+        if (object == null || getClass() != object.getClass()) return false;
+        User user = (User) object;
         return Objects.equals(username, user.username) && userType == user.userType;
     }
 
