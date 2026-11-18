@@ -128,7 +128,7 @@ Google Maps for UofT food spots on campus
 - an owner can reply to a review and it should be indicated in the UI that they are the owner
 
 ### Update food truck details (owner)
-- a food truck owner can update any field defined in FoodTruck in [entities](#entities)
+- a food truck owner can update any field defined in entities.FoodTruck in [entities](#entities)
 
 (Add additional use cases as needed.)
 
@@ -155,15 +155,15 @@ Google Maps for UofT food spots on campus
    - ratings: List\<Rating\> (or make each rating category mandatory and list them out individually?)
    - text: String (optional)
    - photos: image (optional)
-- FoodTruck
+- entities.FoodTruck
   - owner: User (with type owner, or null if no owner associated with it)
   - location: Location
   - reviews: List\<Review\>
   - cuisineType: CuisineType (or list of cuisine types?, or String?)
   - menu: Menu
 - Menu
-  - List\<MenuItem\>
-- MenuItem
+  - List\<entities.MenuItem\>
+- entities.MenuItem
   - description: String
   - price: float (2 decimals)
 - Location
