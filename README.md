@@ -125,45 +125,262 @@ Photo upload
 
 ## Use Cases
 
-### Login
-- PAs: user or owner
-- Trigger: submit button on login form
-- users or owners log in depending on the account
-- input data
-  - username, password
-- result
-  - view model updated with user
+### Sign up as a reviewer
 
-### Logout
+- **Actor:** User (not logged in)
+- **Preconditions:** None
+- **Main flow:**
+    1. User chooses "Sign up as reviewer".
+    2. User enters a username, password, and password confirmation.
+    3. System validates the input, creates a reviewer account, and logs the user in.
+- **Alternate/error flows:**
+    - The username is already taken (as a reviewer or an owner account), so the system shows an error.
+    - The passwords do not match, or a field is empty or fails the length rules, so the system shows an error.
+- **Postconditions:** A reviewer account exists and a session is active.
 
-### Sign up
+### Sign up as an owner and register a truck
 
-### Get food trucks
-- PAs: user or owner
-- Trigger:
-- get each food truck's location and display them as pins on the map
+- **Actor:** User (not logged in)
+- **Preconditions:** None
+- **Main flow:**
+    1. User chooses "Sign up as owner".
+    2. User enters the account credentials and truck details: name, cuisine, price range, and initial location on the campus map.
+    3. System validates the input, creates the owner account and the truck, and logs the owner in.
+- **Alternate/error flows:**
+    - Same credential errors as "Sign up as a reviewer".
+    - The truck name is empty or the location is not on campus, so the system shows an error.
+- **Postconditions:** An owner account is linked to exactly one new truck, and a session is active.
 
-### Show food truck details
-- show food truck details (once a pin is clicked)
+### Log in
 
-### View a food truck's reviews
-- also allow them to be sorted by a rating category
+- **Actor:** Reviewer or owner
+- **Preconditions:** The user has an account and is not logged in.
+- **Main flow:**
+    1. User enters a username and password.
+    2. System verifies the credentials and starts a session.
+    3. System routes the user to the view for their account type.
+- **Alternate/error flows:** Unknown username or wrong password gives the same generic error message, so it does not reveal which was wrong.
+- **Postconditions:** A session is active with the account type known.
 
-### Generate summary of reviews
-- generate LLM summary of food truck reviews
-- only if there are a sufficient number of reviews
-- only generate a new summary if there are x new reviews since previous summary was generated (prevent too many API calls)
+### Log out
 
-### Write review
-- user can write a review with fields specified in [entities](#entities)
+- **Actor:** Reviewer or owner
+- **Preconditions:** Logged in
+- **Main flow:** User chooses "Log out", the system clears the session, and the app returns to the logged-out view.
+- **Postconditions:** No session is active. Reviewer and owner actions are unavailable until the next login.
 
-### Reply to review (owner)
-- an owner can reply to a review and it should be indicated in the UI that they are the owner
+### View trucks on the campus map
 
-### Update food truck details (owner)
-- a food truck owner can update any field defined in FoodTruck in [entities](#entities)
+- **Actor:** User
+- **Preconditions:** None
+- **Main flow:**
+    1. User opens the map.
+    2. System loads all trucks and displays a marker at each truck's current location.
+    3. User pans and zooms the map.
+- **Alternate/error flows:**
+    - There are no trucks, so the map shows with a "no trucks yet" message.
+    - Map tiles fail to load, so the system shows an error.
+- **Postconditions:** None (read-only).
 
-(Add additional use cases as needed.)
+### View a truck's details
+
+- **Actor:** User
+- **Preconditions:** The truck exists.
+- **Main flow:**
+    1. User selects a truck marker or list entry.
+    2. System shows the truck's name, cuisine, price range, location, photos, menu, and average ratings.
+- **Alternate/error flows:** The truck has no photos or no menu, so the system shows an empty-state message for that section.
+- **Postconditions:** None (read-only).
+
+### Post a review
+
+- **Actor:** Reviewer
+- **Preconditions:** Logged in as a reviewer. The reviewer has not already reviewed this truck.
+- **Main flow:**
+    1. Reviewer opens a truck and chooses "Write a review".
+    2. Reviewer rates the truck 1-5 in each rating category and optionally enters text.
+    3. System validates the input and saves the review with the reviewer, truck, and timestamp.
+    4. System updates the truck's average ratings and shows the new review.
+- **Alternate/error flows:**
+    - A rating category is missing or outside 1-5, so the system shows an error.
+    - The text exceeds the maximum length, so the system shows an error.
+    - The reviewer has already reviewed this truck, so the system rejects the review.
+- **Postconditions:** The review is persisted and the truck's aggregate ratings are recalculated.
+
+### Attach images to a review
+
+- **Actor:** Reviewer
+- **Preconditions:** Logged in as a reviewer. The reviewer is composing a review ("Post a review").
+- **Main flow:**
+    1. Reviewer chooses "Add image" and selects one or more image files.
+    2. System validates file type and size, and shows a preview.
+    3. On submit, the system stores the images and links them to the review.
+- **Alternate/error flows:**
+    - The file type is unsupported, the file exceeds the size limit, or the image count exceeds the maximum, so the system rejects that file and keeps the rest.
+    - The file cannot be read or stored, so the system shows an error and the review is still submittable without it.
+- **Postconditions:** The review has zero or more linked images.
+
+### View a truck's reviews
+
+- **Actor:** User
+- **Preconditions:** The truck exists.
+- **Main flow:** User opens the truck's reviews. System lists each review with the reviewer's username, category ratings, text, images, date, and owner reply (if any), newest first by default.
+- **Alternate/error flows:** There are no reviews, so the system shows an empty-state message.
+- **Postconditions:** None (read-only).
+
+### Sort reviews by rating category
+
+- **Actor:** User
+- **Preconditions:** The truck has at least one review.
+- **Main flow:**
+    1. User selects a rating category and a direction (highest or lowest first).
+    2. System reorders the reviews by that category.
+- **Alternate/error flows:** Ties are broken by newest first.
+- **Postconditions:** None (the sort is view state only).
+
+### View a review summary
+
+- **Actor:** User
+- **Preconditions:** The truck exists.
+- **Main flow:**
+    1. User opens the truck's summary section.
+    2. System sends the truck's review text to the LLM API and displays the returned summary.
+- **Alternate/error flows:**
+    - There are too few reviews to summarize, so the system shows a message in place of a summary.
+    - The API call fails or times out, so the system shows an error and the rest of the page still works.
+- **Postconditions:** None. Open design question: cache the summary and regenerate it when a review is added, edited, or deleted.
+
+### Update truck location
+
+- **Actor:** Owner
+- **Preconditions:** Logged in as an owner.
+- **Main flow:**
+    1. Owner opens the location editor on the map.
+    2. Owner selects a new position.
+    3. System validates that the position is within campus bounds, saves it, and moves the marker.
+- **Alternate/error flows:** The position is outside campus bounds, so the system shows an error and keeps the old location.
+- **Postconditions:** The truck's location is updated and visible to all users.
+
+### Edit cuisine and price range
+
+- **Actor:** Owner
+- **Preconditions:** Logged in as an owner.
+- **Main flow:** Owner edits the cuisine and/or price range, and the system validates and saves the change.
+- **Alternate/error flows:** The cuisine is empty or the price range is not one of the allowed values, so the system shows an error.
+- **Postconditions:** The truck details are updated.
+
+### Import Google Maps reviews
+
+- **Actor:** Owner
+- **Preconditions:** Logged in as an owner.
+- **Main flow:**
+    1. Owner chooses "Import Google Maps reviews" and identifies the truck's Google Maps listing.
+    2. System fetches the listing's reviews through the external API.
+    3. System saves them to the truck, labelled as imported with their original author name, rating, text, and date.
+- **Alternate/error flows:**
+    - The listing is not found, so the system shows an error.
+    - The API fails or is rate-limited, so nothing is imported.
+    - Reviews were already imported, so the system skips duplicates.
+- **Postconditions:** The truck has imported reviews, shown separately from native reviews. Open design question: how a single Google rating maps onto the four rating categories.
+
+### Upload a truck photo
+
+- **Actor:** Owner
+- **Preconditions:** Logged in as an owner.
+- **Main flow:** Owner selects an image file, the system validates the type and size, stores it, and adds it to the truck's photo gallery.
+- **Alternate/error flows:** Unsupported type, oversize file, photo limit reached, or storage failure each give an error and no photo is added.
+- **Postconditions:** The photo appears on the truck's details page.
+
+### Remove a truck photo
+
+- **Actor:** Owner
+- **Preconditions:** Logged in as an owner, and the photo belongs to the owner's truck.
+- **Main flow:** Owner selects a photo, chooses "Remove", and confirms. The system deletes it from the gallery.
+- **Alternate/error flows:** The owner cancels the confirmation, so nothing changes.
+- **Postconditions:** The photo no longer appears.
+
+### Add a menu item
+
+- **Actor:** Owner
+- **Preconditions:** Logged in as an owner.
+- **Main flow:** Owner enters an item name and price (and optionally a description), and the system validates it and adds the item to the truck's menu.
+- **Alternate/error flows:** The name is empty, the price is non-numeric, zero or negative, or the name duplicates an existing item, so the system shows an error.
+- **Postconditions:** The item appears on the truck's menu.
+
+### Edit a menu item
+
+- **Actor:** Owner
+- **Preconditions:** Logged in as an owner, and the item is on the owner's truck menu.
+- **Main flow:** Owner selects an item, changes its name, price, or description, and the system validates and saves the change.
+- **Alternate/error flows:** Same validation errors as "Add a menu item".
+- **Postconditions:** The updated item is shown to all users.
+
+### Remove a menu item
+
+- **Actor:** Owner
+- **Preconditions:** Logged in as an owner, and the item is on the owner's truck menu.
+- **Main flow:** Owner selects an item, chooses "Remove", and confirms. The system deletes it.
+- **Alternate/error flows:** The owner cancels the confirmation, so nothing changes.
+- **Postconditions:** The item no longer appears on the menu.
+
+### Reply to a review
+
+- **Actor:** Owner
+- **Preconditions:** Logged in as an owner. The review is for the owner's truck and has no reply yet.
+- **Main flow:**
+    1. Owner opens a review on their truck and chooses "Reply".
+    2. Owner enters the reply text.
+    3. System validates the text and saves the reply, linked to the review and shown beneath it.
+- **Alternate/error flows:**
+    - The text is empty or too long, so the system shows an error.
+    - The review is for another owner's truck, so the system rejects the reply.
+    - The review already has a reply, so the system rejects the reply.
+- **Postconditions:** The review has one owner reply visible to all users.
+
+### Image Storage
+
+### Aggregate rating calculation
+
+### Review Summary Generation
+
+## Stretch Use Cases
+
+### Edit a review
+
+- **Actor:** Reviewer
+- **Preconditions:** Logged in as a reviewer who authored the review.
+- **Main flow:**
+    1. Reviewer opens their own review and chooses "Edit".
+    2. Reviewer changes the ratings, text, or images.
+    3. System validates using the same rules as "Post a review" and "Attach images to a review", saves the changes, and recalculates the truck's aggregate ratings.
+- **Alternate/error flows:** Validation errors as in "Post a review". The reviewer is not the author, so the action is not offered and is rejected if attempted.
+- **Postconditions:** The review is updated and marked as edited.
+
+### Delete a review
+
+- **Actor:** Reviewer
+- **Preconditions:** Logged in as a reviewer who authored the review.
+- **Main flow:**
+    1. Reviewer chooses "Delete" on their own review and confirms.
+    2. System deletes the review, its images, and any owner reply, then recalculates the truck's aggregate ratings.
+- **Alternate/error flows:** The reviewer cancels the confirmation, so nothing changes.
+- **Postconditions:** The review no longer exists and the reviewer may post a new one for this truck.
+
+### Edit a reply to a review
+
+- **Actor:** Owner
+- **Preconditions:** Logged in as an owner who wrote the reply.
+- **Main flow:** Owner chooses "Edit" on their reply, changes the text, and the system validates and saves it.
+- **Alternate/error flows:** Same validation errors as "Reply to a review".
+- **Postconditions:** The reply text is updated and marked as edited.
+
+### Delete a reply to a review
+
+- **Actor:** Owner
+- **Preconditions:** Logged in as an owner who wrote the reply.
+- **Main flow:** Owner chooses "Delete" on their reply and confirms. The system removes the reply.
+- **Alternate/error flows:** The owner cancels the confirmation, so nothing changes.
+- **Postconditions:** The review has no reply, and the owner may post a new one.
 
 ---
 
