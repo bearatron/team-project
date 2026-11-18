@@ -1,3 +1,4 @@
+import entities.Location;
 import entities.Review;
 
 import java.awt.*;
@@ -8,13 +9,13 @@ import java.util.Comparator;
 
 public class FoodTruck {
     private final String name;
-    private final String location;
+    private final Location location;
     private final List<String> cuisineType;
     private final List<Image> photos;
     private final List<MenuItem> menu = new ArrayList<>();
     private final List<Review> reviews = new ArrayList<>();
 
-    public FoodTruck(String name, String location, List<String> cuisineType, List<Image> photos) {
+    public FoodTruck(String name, Location location, List<String> cuisineType, List<Image> photos) {
         this.name = name;
         this.location = location;
         this.cuisineType = new ArrayList<>(cuisineType);
@@ -42,7 +43,7 @@ public class FoodTruck {
         return name;
     }
 
-    public String getLocation() {
+    public Location getLocation() {
         return location;
     }
 
