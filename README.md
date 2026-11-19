@@ -117,10 +117,6 @@ Menu
 - As an owner, I want to edit a menu item, so my menu and prices stay accurate.
 - As an owner, I want to remove a menu item, so users don’t see things I no longer sell.
 
-Photo upload
-- As an owner, I want to upload photos of my truck, so users can see what I offer.
-- As an owner, I want to remove a photo of my truck, so users only see current photos.
-
 ---
 
 ## Use Cases
