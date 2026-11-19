@@ -1,6 +1,6 @@
 package entities;
 
-import java.awt.*;
+import java.awt.Image;
 import java.util.ArrayList;
 import java.util.List;
 import java.math.BigDecimal;
@@ -18,13 +18,17 @@ public class FoodTruck {
     private final List<Review> reviews = new ArrayList<>();
 
     /**
-     * Creates a new FoodTruck with the given name, location, cuisine, and optional photos to be uploaded.
+     * Creates a new FoodTruck with the given name, location, cuisine, and
+     * optional photos to be uploaded.
      * @param name The name of the FoodTruck.
      * @param location The location of the FoodTruck.
      * @param cuisineType The type of cuisine of the FoodTruck.
      * @param photos List of optional images related to the FoodTruck.
      */
-    public FoodTruck(String name, Location location, List<String> cuisineType, List<Image> photos) {
+    public FoodTruck(String name,
+                     Location location,
+                     List<String> cuisineType,
+                     List<Image> photos) {
         this.name = name;
         this.location = location;
         this.cuisineType = new ArrayList<>(cuisineType);
@@ -34,7 +38,7 @@ public class FoodTruck {
     /**
      * Add a MenuItem to the given menu of a FoodTruck.
      *
-     * @add a menu item
+     * @param item the menu item to add
      */
     public void addItem(MenuItem item) {
         menu.add(item);
@@ -43,7 +47,7 @@ public class FoodTruck {
     /**
      * Add a review from a user to a given FoodTruck.
      *
-     * @add the review
+     * @param review the review to add
      */
     public void addReview(Review review) {
         reviews.add(review);
