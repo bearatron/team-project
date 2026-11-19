@@ -51,7 +51,6 @@ public class MenuItem {
 
     @Override
     public String toString() {
-        return String.format("%-20s $%6.2f", name, price);
+        return String.format("%s $%.2f", name, price);
     }
 }
-
