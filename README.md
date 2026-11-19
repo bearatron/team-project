@@ -161,7 +161,7 @@ Photo upload
 - an owner can reply to a review and it should be indicated in the UI that they are the owner
 
 ### Update food truck details (owner)
-- a food truck owner can update any field defined in FoodTruck in [entities](#entities)
+- a food truck owner can update any field defined in entities.FoodTruck in [entities](#entities)
 
 (Add additional use cases as needed.)
 
@@ -179,27 +179,26 @@ Photo upload
 
 ## Entities
 
-- Category (enum)
-    - `OVERALL`, `SERVICE`, `FOOD_QUALITY`, `VALUE_FOR_MONEY`
-- UserType (enum)
-    - `REVIEWER`, `OWNER`
-- PriceRange
-    - start: BigDecimal (2 decimal places)
-    - end: BigDecimal (2 decimal places)
-- Image
-    - path: String
-- User
-    - type: UserType
-    - username: String (unique)
-    - *note: there is a one-to-one relationship between FoodTruck and User (with type `OWNER` or `null`), but this will be encoded in the database*
-- FoodTruck
-    - name: String
-    - location: Location
-    - cuisineType: List\<String\>
-    - priceRange: PriceRange
-    - photos: List\<Image\>
-    - menu: List\<MenuItem\>
-    - reviews: List\<Review\>
+- Rating
+   - category: String (service, food quality, value for money, waiting time)
+   - num: int (1-5)
+- WaitingTimeRating (extends Rating class)
+  - 1-5 scale with labels: e.g. 1 = "20+ min", 3 = "about 10 min", 5 = "under 5 min"
+- Review
+   - ratings: List\<Rating\> (or make each rating category mandatory and list them out individually?)
+   - text: String (optional)
+   - photos: image (optional)
+- entities.FoodTruck
+  - owner: User (with type owner, or null if no owner associated with it)
+  - location: Location
+  - reviews: List\<Review\>
+  - cuisineType: CuisineType (or list of cuisine types?, or String?)
+  - menu: Menu
+- Menu
+  - List\<entities.MenuItem\>
+- entities.MenuItem
+  - description: String
+  - price: float (2 decimals)
 - Location
     - latitude: double within [-90, 90]
     - longitude: double within [-180, 180]
