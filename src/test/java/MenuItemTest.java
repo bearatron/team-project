@@ -11,6 +11,6 @@ class MenuItemTest {
     void toStringShowsTwoDecimalPlaces() {
         MenuItem item = new MenuItem("Taco", "Taco al Pastor", new BigDecimal("4.5"));
 
-        assertEquals("Taco" + " ".repeat(16) + " $  4.50", item.toString());
+        assertEquals("Taco $4.50", item.toString());
     }
 }
