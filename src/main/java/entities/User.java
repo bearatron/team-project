@@ -2,6 +2,8 @@ package entities;
 
 import java.util.Objects;
 
+import org.apache.commons.lang3.Validate;
+
 /**
  * Represents a user of the application.
  */
@@ -16,6 +18,7 @@ public class User {
      * @param userType the user's user type
      */
     public User(String username, UserType userType)  {
+        Validate.notEmpty(username, "username must be non-empty");
         this.username = username;
         this.userType = userType;
     }
