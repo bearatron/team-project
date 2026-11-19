@@ -1,7 +1,9 @@
 ## Changes
-<!-- What does this PR do, and why? -->
-<!-- What issue does this resolve? e.g. closes #12 -->
-<!-- Also include any additional notes useful for your reviewer -->
+What does this PR do, and why?
+
+What issue does this PR resolve?
+
+Include any additional notes useful for your reviewer
 
 ## Testing
 - [ ] relevant JUnit tests added or updated
