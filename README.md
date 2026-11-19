@@ -178,7 +178,7 @@ Photo upload
     2. System loads all trucks and displays a marker at each truck's current location.
     3. User pans and zooms the map.
 - **Alternate/error flows:**
-    - There are no trucks, so the map shows with a "no trucks yet" message.
+    - There are no trucks, so the map shows with a "no trucks yet" message in the side panel.
     - Map tiles fail to load, so the system shows an error.
 - **Postconditions:** None (read-only).
 
@@ -188,8 +188,12 @@ Photo upload
 - **Preconditions:** The truck exists.
 - **Main flow:**
     1. User selects a truck marker or list entry.
-    2. System shows the truck's name, cuisine, price range, location, photos, menu, and average ratings.
-- **Alternate/error flows:** The truck has no photos or no menu, so the system shows an empty-state message for that section.
+    2. Map centers on selected marker
+    3. System shows the truck's name, and three panels: overview, menu, reviews
+    4. Overview shows average truck ratings in all categories, cuisine, price range, and reviewer-uploaded photos
+    5. Menu shows all menu items
+    6. Reviews show average ratings for all categories as well as all reviews.
+- **Alternate/error flows:** The truck has no reviews, no photos or no menu, so the system shows an empty-state message for those sections.
 - **Postconditions:** None (read-only).
 
 ### Post a review
@@ -197,14 +201,15 @@ Photo upload
 - **Actor:** Reviewer
 - **Preconditions:** Logged in as a reviewer. The reviewer has not already reviewed this truck.
 - **Main flow:**
-    1. Reviewer opens a truck and chooses "Write a review".
-    2. Reviewer rates the truck 1-5 in each rating category and optionally enters text.
+    1. Reviewer opens a truck, clicks the review tab, and clicks the "write a review button".
+    2. Reviewer rates the truck 1-5 in each rating category and optionally enters text (photo attachment handled in [this use case](#attach-images-to-a-review)).
     3. System validates the input and saves the review with the reviewer, truck, and timestamp.
     4. System updates the truck's average ratings and shows the new review.
+    5. System generates a new review summary if necessary.
 - **Alternate/error flows:**
     - A rating category is missing or outside 1-5, so the system shows an error.
     - The text exceeds the maximum length, so the system shows an error.
-    - The reviewer has already reviewed this truck, so the system rejects the review.
+    - The reviewer has already reviewed this truck, so the system notifies the user by displaying a message in place of the "write a review" button.
 - **Postconditions:** The review is persisted and the truck's aggregate ratings are recalculated.
 
 ### Attach images to a review
@@ -223,32 +228,36 @@ Photo upload
 ### View a truck's reviews
 
 - **Actor:** User
-- **Preconditions:** The truck exists.
-- **Main flow:** User opens the truck's reviews. System lists each review with the reviewer's username, category ratings, text, images, date, and owner reply (if any), newest first by default.
+- **Preconditions:** The truck exists and is selected on the map.
+- **Main flow:**
+    1. User opens the truck's reviews tab.
+    2. System lists each review with the reviewer's username, category ratings, text, images, date, and owner reply (if any), newest first by default.
 - **Alternate/error flows:** There are no reviews, so the system shows an empty-state message.
 - **Postconditions:** None (read-only).
 
 ### Sort reviews by rating category
 
 - **Actor:** User
-- **Preconditions:** The truck has at least one review.
+- **Preconditions:** The truck has at least one review. The truck is selected on the map.
 - **Main flow:**
-    1. User selects a rating category and a direction (highest or lowest first).
-    2. System reorders the reviews by that category.
+    1. User opens the truck's reviews tab.
+    2. User selects a rating category from a dropdown and a direction (highest or lowest first).
+    3. System reorders the reviews by that category.
 - **Alternate/error flows:** Ties are broken by newest first.
 - **Postconditions:** None (the sort is view state only).
 
-### View a review summary
+### Generate a review summary
 
-- **Actor:** User
-- **Preconditions:** The truck exists.
+- **Actor:** System (triggered by image upload or removal)
+- **Preconditions:** The truck exists and is selected on the map. More than 5 reviews with text have been posted.
 - **Main flow:**
     1. User opens the truck's summary section.
     2. System sends the truck's review text to the LLM API and displays the returned summary.
 - **Alternate/error flows:**
     - There are too few reviews to summarize, so the system shows a message in place of a summary.
     - The API call fails or times out, so the system shows an error and the rest of the page still works.
-- **Postconditions:** None. Open design question: cache the summary and regenerate it when a review is added, edited, or deleted.
+- **Postconditions:** None.
+- **Notes:** Decide when to regenerate a new review
 
 ### Update truck location
 
@@ -339,11 +348,43 @@ Photo upload
 
 ### Image Storage
 
+- **Actor:** System (triggered by image upload or removal)
+- **Trigger:** A reviewer attaches images to a review, an owner uploads or removes a truck photo, or a review or photo is deleted.
+- **Preconditions:** The file has passed the type, size, and count validation of the calling use case, and the caller owns the target review or truck.
+- **Main flow:**
+    1. System assigns the image a unique ID and writes the file to persistent storage.
+    2. System creates an `Image` record with the file's path and links it to the owning review or truck.
+    3. System returns the image path to the caller and shows the image in the review or photo gallery.
+    4. When the image is displayed, system resolves its path and serves the file, using a cached copy when available.
+- **Alternate/error flows:**
+    - The storage is unavailable, full, or the write fails, so the system deletes any partial file, leaves the review or truck unchanged, and reports a storage error.
+    - The file is missing or unreadable when requested, so the system shows a placeholder image and logs the problem.
+    - Deleting an image file fails, so the system removes the `Image` record anyway and queues the file for later cleanup.
+- **Postconditions:** The file is stored exactly once and linked to one review or truck; or, on failure, neither the file nor the link remains.
+- **Design questions:** Should we have thumbnail generation?
+
 ### Aggregate rating calculation
 
-### Review Summary Generation
+- **Actor:** System (triggered by review changes)
+- **Trigger:** A review is created, edited, deleted, or imported.
+- **Preconditions:** The truck exists. Each native review has one rating per category; imported reviews may have only a single overall rating.
+- **Main flow:**
+    1. System loads all reviews for the truck.
+    2. For each category, system computes the average of the ratings that are present and rounds it to one decimal place.
+    3. System stores the per-category averages (including `OVERALL`), the total review count, and the number of ratings used for each category.
+    4. System shows the updated averages on the truck details page, the map or list cards, and the review section.
+- **Alternate/error flows:**
+    - The truck has no reviews, so the system shows "No ratings yet" and stores no average, avoiding division by zero.
+    - A review lacks a category, so the system excludes it from that category's average; imported reviews follow the documented Google rating mapping.
+    - Recalculation fails, so the previous aggregates remain and are marked stale, and the next read or write retries the calculation.
+    - Two changes race, so recalculation is idempotent and uses a consistent snapshot, or is serialized per truck.
+- **Postconditions:** The stored aggregates match the truck's current reviews, and the review count is current.
+- **Design questions:** Should averages be calculated and cached on write, or calculated on read? What rounding rule should the UI use? How does a single Google Maps rating map onto the four categories, and do imported reviews count toward the averages?
+
 
 ## Stretch Use Cases
+
+Optional features that are not required for the MVP.
 
 ### Edit a review
 
