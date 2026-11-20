@@ -466,6 +466,7 @@ Optional features that are not required for the MVP.
     - authorDisplayName: String (used for imported reviews)
     - source: enum (`APP`, `GOOGLE_MAPS`)
     - ratings: Map\<Category, Integer\> (each value in [1, 5], one entry per category)
+        - *Note: The number of mandatory categories depends on source. `APP` requires all 4 categories to be present, while `GOOGLE_MAPS` only requires `OVERALL`*
     - text: String (optional)
     - photos: List\<Image\> (optional, may be empty)
     - reply: Reply (optional, at most one)
