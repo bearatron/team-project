@@ -121,17 +121,31 @@ Menu
 
 ## Use Cases
 
+useful constants
+
+| Constant | Value |
+|---|---|
+| `MAX_REVIEW_TEXT_LENGTH` | 1000 characters |
+| `MAX_REPLY_TEXT_LENGTH` | 500 characters |
+| `MAX_IMAGES_PER_REVIEW` | 5 |
+| `MAX_IMAGE_SIZE` | 5 MB |
+| `ALLOWED_IMAGE_TYPES` | JPEG, PNG |
+| `MIN_PASSWORD_LENGTH` | 8 |
+| `MIN_REVIEWS_FOR_SUMMARY` | 5 text reviews |
+| `SUMMARY_REGEN_THRESHOLD` | 5 new text reviews |
+| `GOOGLE_IMPORT_MAX` | 5 (API limit) |
+
 ### Sign up as a reviewer
 
 - **Actor:** User (not logged in)
 - **Preconditions:** None
 - **Main flow:**
-    1. User chooses "Sign up as reviewer".
-    2. User enters a username, password, and password confirmation.
-    3. System validates the input, creates a reviewer account, and logs the user in.
+    1. System validates the input.
+    2. System creates a reviewer account and starts a session.
+    3. System returns the username and user type.
 - **Alternate/error flows:**
-    - The username is already taken (as a reviewer or an owner account), so the system shows an error.
-    - The passwords do not match, or a field is empty or fails the length rules, so the system shows an error.
+    - The username is already taken (by a reviewer or an owner account).
+    - The passwords do not match, a field is empty, or the password is shorter than `MIN_PASSWORD_LENGTH`.
 - **Postconditions:** A reviewer account exists and a session is active.
 
 ### Sign up as an owner and register a truck
@@ -139,12 +153,12 @@ Menu
 - **Actor:** User (not logged in)
 - **Preconditions:** None
 - **Main flow:**
-    1. User chooses "Sign up as owner".
-    2. User enters the account credentials and truck details: name, cuisine, price range, and initial location on the campus map.
-    3. System validates the input, creates the owner account and the truck, and logs the owner in.
+    1. System validates the credentials and truck details.
+    2. System creates the owner account and the truck at the same time (either both succeed or both fail).
+    3. System starts a session and returns the username, user type and truck name.
 - **Alternate/error flows:**
     - Same credential errors as "Sign up as a reviewer".
-    - The truck name is empty or the location is not on campus, so the system shows an error.
+    - The truck name is empty, the cuisine list is empty, the price range is invalid (start greater than end, or negative)
 - **Postconditions:** An owner account is linked to exactly one new truck, and a session is active.
 
 ### Log in
@@ -201,7 +215,6 @@ Menu
     2. Reviewer rates the truck 1-5 in each rating category and optionally enters text (photo attachment handled in [this use case](#attach-images-to-a-review)).
     3. System validates the input and saves the review with the reviewer, truck, and timestamp.
     4. System updates the truck's average ratings and shows the new review.
-    5. System generates a new review summary if necessary.
 - **Alternate/error flows:**
     - A rating category is missing or outside 1-5, so the system shows an error.
     - The text exceeds the maximum length, so the system shows an error.
@@ -244,16 +257,17 @@ Menu
 
 ### Generate a review summary
 
-- **Actor:** System (triggered by image upload or removal)
+- **Actor:** User
 - **Preconditions:** The truck exists and is selected on the map. More than 5 reviews with text have been posted.
 - **Main flow:**
-    1. User opens the truck's summary section.
-    2. System sends the truck's review text to the LLM API and displays the returned summary.
+    1. System loads the truck's stored summary and the number of text reviews when it was generated.
+    2. If the truck has fewer than `MIN_REVIEWS_FOR_SUMMARY` text reviews, system returns a "too few reviews" result.
+    3. If no summary exists, or at least `SUMMARY_REGEN_THRESHOLD` new text reviews exist since the stored count, system sends the review text to the summary generator and stores the new summary with the current count.
+    4. System returns the summary.
 - **Alternate/error flows:**
     - There are too few reviews to summarize, so the system shows a message in place of a summary.
     - The API call fails or times out, so the system shows an error and the rest of the page still works.
 - **Postconditions:** None.
-- **Notes:** Decide when to regenerate a new review
 
 ### Update truck location
 
