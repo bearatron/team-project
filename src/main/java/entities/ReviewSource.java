@@ -1,6 +1,8 @@
 package entities;
 
-/** Where a {@link Review} came from. */
+/**
+ * Where a {@link Review} came from.
+ */
 public enum ReviewSource {
     /** Posted by a reviewer in this app. */
     APP,

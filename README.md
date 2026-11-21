@@ -180,19 +180,9 @@ Photo upload
 ## Entities
 
 - Category (enum)
-<<<<<<< Updated upstream
-    - `OVERALL`, `SERVICE`, `FOOD_QUALITY`, `VALUE_FOR_MONEY`
-=======
     - `OVERALL`, `SERVICE`, `FOOD_QUALITY`, `VALUE_FOR_MONEY`, `WAITING_TIME`, `CLEANLINESS`, `SPEED`
-- Rating (immutable)
-    - category: Category
-    - score: int in [1, 5]
-    - *note: use `Rating.of(category, score)`; `WAITING_TIME` ratings are always `WaitingTimeRating`*
-- WaitingTimeRating (extends Rating, category is always `WAITING_TIME`)
-    - label per score: 1 = "20+ min", 2 = "about 15 min", 3 = "about 10 min", 4 = "5-10 min", 5 = "under 5 min"
 - ReviewSource (enum)
     - `APP`, `GOOGLE_MAPS`
->>>>>>> Stashed changes
 - UserType (enum)
     - `REVIEWER`, `OWNER`
 - PriceRange
@@ -219,30 +209,15 @@ Photo upload
     - name: String
     - description: String 
     - price: BigDecimal (2 decimal places)
-<<<<<<< Updated upstream
-- Review
+- Review (immutable; create with `Review.fromInApp(...)` or `Review.fromGoogleMaps(...)`)
     - author: User (type `REVIEWER`; `null` if imported from Google Maps)
-    - authorDisplayName: String (used for imported reviews)
-    - source: enum (`APP`, `GOOGLE_MAPS`)
-    - ratings: Map\<Category, Integer\> (each value in [1, 5], one entry per category)
+    - authorDisplayName: String (used for imported reviews; `null` for in-app reviews)
+    - source: ReviewSource (`APP` if there is an author, otherwise `GOOGLE_MAPS`)
+    - ratings: Map\<Category, Integer\> (each value in [1, 10]; at least one entry, any subset of categories)
     - text: String (optional)
     - photos: List\<Image\> (optional, may be empty)
-    - reply: Reply (optional, at most one)
-    - timestamp: LocalDateTime (from `java.time` package)
-=======
-- Review (immutable; create with `Review.posted(...)` or `Review.imported(...)`)
-    - author: User (type `REVIEWER`; `null` if imported from Google Maps)
-    - authorDisplayName: String (used for imported reviews)
-    - source: ReviewSource
-    - ratings: Map\<Category, Rating\> (at least one; any subset of categories, at most one entry per category)
-    - text: String (optional)
-    - photoPaths: List\<String\> (optional, may be empty)
-    - reply: Reply (optional, at most one)
-    - timestamp: LocalDateTime (from `java.time` package)
-    - editedTimestamp: LocalDateTime (optional, set by `edit(...)`)
-    - *note: for privacy, `getPublicAuthorName()` returns "Anonymous" for `APP` reviews; never display the author's username*
-    - *note: `edit(...)`, `withReply(...)` and `withoutReply()` return a new Review; imported reviews cannot be edited; who may edit or delete is checked in the use case*
->>>>>>> Stashed changes
+    - reply: Reply (optional, at most one; set with `withReply(...)`)
+    - timePosted: LocalDateTime (from `java.time` package)
 - Reply
     - text: String
     - timestamp: LocalDateTime (from `java.time` package)
