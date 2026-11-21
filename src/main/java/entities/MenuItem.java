@@ -11,7 +11,9 @@ public class MenuItem {
     private final BigDecimal price;
 
     /**
-     * Creates a new FoodTruck with the given name, location, cuisine, and optional photos to be uploaded.
+     * Creates a new FoodTruck with the given name, location, cuisine, and
+     * optional photos to be uploaded.
+     *
      * @param name The name of the MenuItem.
      * @param description The description of the MenuItem.
      * @param price The price of the MenuItem.
