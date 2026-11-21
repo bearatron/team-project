@@ -203,7 +203,6 @@ Photo upload
 - User
     - type: UserType
     - username: String (unique)
-    - password: String
     - *note: there is a one-to-one relationship between FoodTruck and User (with type `OWNER` or `null`), but this will be encoded in the database*
 - FoodTruck
     - name: String
