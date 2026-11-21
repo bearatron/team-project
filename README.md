@@ -180,7 +180,9 @@ Photo upload
 ## Entities
 
 - Category (enum)
-    - `OVERALL`, `SERVICE`, `FOOD_QUALITY`, `VALUE_FOR_MONEY`
+    - `OVERALL`, `SERVICE`, `FOOD_QUALITY`, `VALUE_FOR_MONEY`, `WAITING_TIME`, `CLEANLINESS`, `SPEED`
+- ReviewSource (enum)
+    - `APP`, `GOOGLE_MAPS`
 - UserType (enum)
     - `REVIEWER`, `OWNER`
 - PriceRange
@@ -207,15 +209,15 @@ Photo upload
     - name: String
     - description: String 
     - price: BigDecimal (2 decimal places)
-- Review
+- Review (immutable; create with `Review.fromInApp(...)` or `Review.fromGoogleMaps(...)`)
     - author: User (type `REVIEWER`; `null` if imported from Google Maps)
-    - authorDisplayName: String (used for imported reviews)
-    - source: enum (`APP`, `GOOGLE_MAPS`)
-    - ratings: Map\<Category, Integer\> (each value in [1, 5], one entry per category)
+    - authorDisplayName: String (used for imported reviews; `null` for in-app reviews)
+    - source: ReviewSource (`APP` if there is an author, otherwise `GOOGLE_MAPS`)
+    - ratings: Map\<Category, Integer\> (each value in [1, 10]; at least one entry, any subset of categories)
     - text: String (optional)
     - photos: List\<Image\> (optional, may be empty)
-    - reply: Reply (optional, at most one)
-    - timestamp: LocalDateTime (from `java.time` package)
+    - reply: Reply (optional, at most one; set with `withReply(...)`)
+    - timePosted: LocalDateTime (from `java.time` package)
 - Reply
     - text: String
     - timestamp: LocalDateTime (from `java.time` package)
