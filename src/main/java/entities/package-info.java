@@ -1,4 +1,4 @@
 /**
- * Entities for our application (the core domain objects)
+ * Entities for our application (the core domain objects).
  */
 package entities;

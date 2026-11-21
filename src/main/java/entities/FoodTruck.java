@@ -1,10 +1,10 @@
 package entities;
 
 import java.awt.Image;
-import java.util.ArrayList;
-import java.util.List;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.List;
 
 /**
  * Represents a FoodTruck on the UofT campus.
@@ -20,6 +20,7 @@ public class FoodTruck {
     /**
      * Creates a new FoodTruck with the given name, location, cuisine, and
      * optional photos to be uploaded.
+     *
      * @param name The name of the FoodTruck.
      * @param location The location of the FoodTruck.
      * @param cuisineType The type of cuisine of the FoodTruck.
@@ -57,7 +58,7 @@ public class FoodTruck {
      * Returns the range of prices across all items on the FoodTruck's menu.
      *
      * @return a PriceRange of the highest and lowest prices on the menu,
-     * or null, if there is no menu.
+     *      or null, if there is no menu.
      */
     public PriceRange getPriceRange() {
         if (menu.isEmpty()) {
@@ -80,7 +81,7 @@ public class FoodTruck {
     }
 
     /**
-     * Returns the location of the FoodTruck
+     * Returns the location of the FoodTruck.
      *
      * @return the location of the FoodTruck.
      */

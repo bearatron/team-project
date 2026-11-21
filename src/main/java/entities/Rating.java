@@ -1,3 +1,6 @@
 package entities;
 
-public class Rating { }
+/**
+ * Rating entity.
+ */
+public class Rating {}
