@@ -1,3 +1,6 @@
 package entities;
 
-public class Location { }
+/**
+ * Location entity.
+ */
+public class Location {}
