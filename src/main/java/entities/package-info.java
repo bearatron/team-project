@@ -1,7 +1,4 @@
 /**
- * Enterprise business rules: the core model of the application.
- *
- * <p>Classes here depend on nothing outside this package except the Java
- * standard library and Apache Commons Lang.
+ * Entities for our application (the core domain objects).
  */
 package entities;
