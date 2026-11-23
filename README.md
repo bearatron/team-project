@@ -309,6 +309,7 @@ useful constants
     - The user is not an owner or has no truck.
     - The cuisine list is empty, or the price range is invalid (start greater than end, or negative).
 - **Postconditions:** The truck details are updated.
+- **Note:** A food truck's name cannot be edited by its owner 
 
 ### Import Google Maps reviews
 
