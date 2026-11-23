@@ -128,7 +128,7 @@ class ReviewTest {
     @ValueSource(ints = {0, 11, -1})
     void rejectsScoresOutOfRange(int score) {
         assertThrows(IllegalArgumentException.class, () -> Review.fromInApp(author,
-                ratings(Category.OVERALL, 5, Category.SPEED, score), null, null, POSTED));
+                ratings(Category.OVERALL, 5, Category.CLEANLINESS, score), null, null, POSTED));
     }
 
     @Test
@@ -195,7 +195,7 @@ class ReviewTest {
         Review review = inApp();
 
         assertThrows(UnsupportedOperationException.class,
-                () -> review.getRatings().put(Category.SPEED, 1));
+                () -> review.getRatings().put(Category.CLEANLINESS, 1));
         assertThrows(UnsupportedOperationException.class,
                 () -> review.getPhotos().add(photo));
     }

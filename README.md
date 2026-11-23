@@ -180,7 +180,7 @@ Photo upload
 ## Entities
 
 - Category (enum)
-    - `OVERALL`, `SERVICE`, `FOOD_QUALITY`, `VALUE_FOR_MONEY`, `WAITING_TIME`, `CLEANLINESS`, `SPEED`
+    - `OVERALL`, `SERVICE`, `FOOD_QUALITY`, `VALUE_FOR_MONEY`, `WAITING_TIME`, `CLEANLINESS`
 - ReviewSource (enum)
     - `APP`, `GOOGLE_MAPS`
 - UserType (enum)
