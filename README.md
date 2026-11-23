@@ -471,6 +471,12 @@ Data access interfaces that allow the use cases to access external services
 
 ---
 
+## UI mockup
+
+[View on Excalidraw](https://excalidraw.com/#json=mYNXAoOlnzrKRs6mx3F_l,rZMObwSdUBag2IwniyfNx)
+![UI mockup](ui-mockup.png)
+
+
 ## API Usage
 
 1. Custom API
