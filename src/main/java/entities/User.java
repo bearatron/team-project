@@ -1,7 +1,6 @@
 package entities;
 
 import java.util.Objects;
-
 import org.apache.commons.lang3.Validate;
 
 /**
@@ -17,14 +16,14 @@ public class User {
      * @param username the user's username
      * @param userType the user's user type
      */
-    public User(String username, UserType userType)  {
+    public User(String username, UserType userType) {
         Validate.notEmpty(username, "username must be non-empty");
         this.username = username;
         this.userType = userType;
     }
 
     /**
-     * Return the user's username
+     * Return the user's username.
      *
      * @return the username of the user
      */
@@ -33,7 +32,7 @@ public class User {
     }
 
     /**
-     * Return the user's user type
+     * Return the user's user type.
      *
      * @return the type of the user
      */
@@ -43,7 +42,9 @@ public class User {
 
     @Override
     public boolean equals(Object object) {
-        if (object == null || getClass() != object.getClass()) return false;
+        if (object == null || getClass() != object.getClass()) {
+            return false;
+        }
         User user = (User) object;
         return Objects.equals(username, user.username) && userType == user.userType;
     }

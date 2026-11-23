@@ -5,12 +5,13 @@ import java.math.BigDecimal;
 /**
  * Represents a PriceRange for the difference in the max and min prices on a Menu.
  */
-public class PriceRange{
+public class PriceRange {
     private final BigDecimal min;
     private final BigDecimal max;
 
     /**
      * Creates a PriceRange from min to max on a given Menu.
+     *
      * @param min The name of the MenuItem.
      * @param max The description of the MenuItem.
      */
