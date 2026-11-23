@@ -209,13 +209,13 @@ Photo upload
     - name: String
     - description: String 
     - price: BigDecimal (2 decimal places)
-- Review (immutable; create with `Review.fromInApp(...)` or `Review.fromGoogleMaps(...)`)
+- Review (create with `Review.fromInApp(...)` or `Review.fromGoogleMaps(...)`)
     - author: User (type `REVIEWER`; `null` if imported from Google Maps)
-    - authorDisplayName: String (used for imported reviews; `null` for in-app reviews)
-    - source: ReviewSource (`APP` if there is an author, otherwise `GOOGLE_MAPS`)
-    - ratings: Map\<Category, Integer\> (each value in [1, 10]; at least one entry, any subset of categories)
+    - authorName: String (the author's username for in-app reviews, or the Google Maps display name for imported ones)
+    - source: ReviewSource (`APP` if there is an author, otherwise `GOOGLE_MAPS`; see also `isImported()`)
+    - ratings: Map\<Category, Integer\> (each value in [1, 10]; must include `OVERALL`, plus any other categories)
     - text: String (optional)
-    - photos: List\<Image\> (optional, may be empty)
+    - photos: List\<java.awt.Image\> (optional, may be empty)
     - reply: Reply (optional, at most one; set with `withReply(...)`)
     - timePosted: LocalDateTime (from `java.time` package)
 - Reply

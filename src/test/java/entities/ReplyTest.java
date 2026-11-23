@@ -9,33 +9,33 @@ import org.junit.jupiter.api.Test;
 
 class ReplyTest {
 
-    private static final LocalDateTime NOW = LocalDateTime.of(2026, 11, 21, 12, 0);
+    private static final LocalDateTime TEST_DATE = LocalDateTime.of(2026, 11, 21, 12, 0);
 
     @Test
     void storesTextAndTimestamp() {
-        Reply reply = new Reply("Thanks for visiting!", NOW);
+        Reply reply = new Reply("Thanks for visiting!", TEST_DATE);
 
         assertEquals("Thanks for visiting!", reply.getText());
-        assertEquals(NOW, reply.getTimestamp());
+        assertEquals(TEST_DATE, reply.getTimestamp());
     }
 
     @Test
     void rejectsBlankText() {
-        assertThrows(IllegalArgumentException.class, () -> new Reply("   ", NOW));
-        assertThrows(IllegalArgumentException.class, () -> new Reply("", NOW));
+        assertThrows(IllegalArgumentException.class, () -> new Reply("   ", TEST_DATE));
+        assertThrows(IllegalArgumentException.class, () -> new Reply("", TEST_DATE));
     }
 
     @Test
     void rejectsNulls() {
-        assertThrows(NullPointerException.class, () -> new Reply(null, NOW));
+        assertThrows(NullPointerException.class, () -> new Reply(null, TEST_DATE));
         assertThrows(NullPointerException.class, () -> new Reply("Thanks", null));
     }
 
     @Test
     void equalityUsesTextAndTimestamp() {
-        assertEquals(new Reply("Thanks", NOW), new Reply("Thanks", NOW));
-        assertEquals(new Reply("Thanks", NOW).hashCode(), new Reply("Thanks", NOW).hashCode());
-        assertNotEquals(new Reply("Thanks", NOW), new Reply("Cheers", NOW));
-        assertNotEquals(new Reply("Thanks", NOW), new Reply("Thanks", NOW.plusMinutes(1)));
+        assertEquals(new Reply("Thanks", TEST_DATE), new Reply("Thanks", TEST_DATE));
+        assertEquals(new Reply("Thanks", TEST_DATE).hashCode(), new Reply("Thanks", TEST_DATE).hashCode());
+        assertNotEquals(new Reply("Thanks", TEST_DATE), new Reply("Cheers", TEST_DATE));
+        assertNotEquals(new Reply("Thanks", TEST_DATE), new Reply("Thanks", TEST_DATE.plusMinutes(1)));
     }
 }

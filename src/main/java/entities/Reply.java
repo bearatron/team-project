@@ -2,7 +2,6 @@ package entities;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
-
 import org.apache.commons.lang3.Validate;
 
 /**
@@ -13,11 +12,8 @@ import org.apache.commons.lang3.Validate;
  */
 public final class Reply {
 
-    /** The reply text; never blank. */
-    private final String content;
-
-    /** When the reply was posted. */
-    private final LocalDateTime postedAt;
+    private final String text;
+    private final LocalDateTime timestamp;
 
     /**
      * Creates a reply.
@@ -27,11 +23,11 @@ public final class Reply {
      * @throws NullPointerException if an argument is {@code null}
      * @throws IllegalArgumentException if {@code text} is blank
      */
-    public Reply(final String text, final LocalDateTime timestamp) {
-        Validate.notBlank(text, "a reply must have non-blank text");
-        Validate.notNull(timestamp, "a reply must have a posting time");
-        this.content = text;
-        this.postedAt = timestamp;
+    public Reply(String text, LocalDateTime timestamp) {
+        Validate.notBlank(text, "reply text must be non-blank");
+        Validate.notNull(timestamp, "reply timestamp must be non-null");
+        this.text = text;
+        this.timestamp = timestamp;
     }
 
     /**
@@ -40,7 +36,7 @@ public final class Reply {
      * @return the reply text, never blank
      */
     public String getText() {
-        return content;
+        return text;
     }
 
     /**
@@ -49,23 +45,23 @@ public final class Reply {
      * @return the posting time
      */
     public LocalDateTime getTimestamp() {
-        return postedAt;
+        return timestamp;
     }
 
     @Override
-    public boolean equals(final Object other) {
+    public boolean equals(Object other) {
         if (this == other) {
             return true;
         }
         if (!(other instanceof Reply)) {
             return false;
         }
-        final Reply that = (Reply) other;
-        return content.equals(that.content) && postedAt.equals(that.postedAt);
+        Reply that = (Reply) other;
+        return text.equals(that.text) && timestamp.equals(that.timestamp);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(content, postedAt);
+        return Objects.hash(text, timestamp);
     }
 }
