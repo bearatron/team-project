@@ -17,7 +17,5 @@ public enum Category {
     /** How long the customer waited for their order. */
     WAITING_TIME,
     /** How clean the truck and its surroundings were. */
-    CLEANLINESS,
-    /** How quickly the order was prepared. */
-    SPEED
+    CLEANLINESS
 }
