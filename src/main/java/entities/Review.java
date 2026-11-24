@@ -3,4 +3,5 @@ package entities;
 /**
  * Review entity.
  */
-public class Review {}
+public class Review {
+}
