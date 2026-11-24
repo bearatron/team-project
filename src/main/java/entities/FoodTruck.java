@@ -97,6 +97,7 @@ public class FoodTruck {
     public void updateLocation(Location newLocation) {
         this.location = newLocation;
     }
+
     /**
      * Returns the CuisineType of the FoodTruck.
      *
