@@ -1,7 +1,8 @@
 package entities;
 
-import java.util.Objects;
 import org.apache.commons.lang3.Validate;
+
+import java.util.Objects;
 
 /**
  * Represents a user of the application.

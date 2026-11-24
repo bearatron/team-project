@@ -1,7 +1,7 @@
 package interface_adapter;
 
 /**
- * Template for ViewManagerModelListener (whose implementation is ViewManager)
+ * Template for ViewManagerModelListener (whose implementation is ViewManager).
  */
 public interface ViewManagerModelListener {
 
