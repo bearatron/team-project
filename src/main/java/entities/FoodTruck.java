@@ -11,7 +11,7 @@ import java.util.List;
  */
 public class FoodTruck {
     private final String name;
-    private final Location location;
+    private Location location;
     private final List<String> cuisineType;
     private final List<Image> photos;
     private final List<MenuItem> menu = new ArrayList<>();
@@ -89,6 +89,14 @@ public class FoodTruck {
         return location;
     }
 
+    /**
+     * Updates this food truck's location.
+     *
+     * @param newLocation the new location
+     */
+    public void updateLocation(Location newLocation) {
+        this.location = newLocation;
+    }
     /**
      * Returns the CuisineType of the FoodTruck.
      *
