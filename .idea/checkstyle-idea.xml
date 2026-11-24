@@ -27,9 +27,9 @@
           $PROJECT_DIR$/checkstyle.xml
           <option name="properties">
             <map>
-              <entry key="org.checkstyle.sun.header.files" value="/com/puppycrawl/tools/checkstyle/any.header" />
-              <entry key="org.checkstyle.sun.suppressionfilter.config" value="checkstyle-suppressions.xml" />
-              <entry key="org.checkstyle.sun.suppressionxpathfilter.config" value="checkstyle-xpath-suppressions.xml" />
+              <entry key="org.checkstyle.google.severity" value="warning" />
+              <entry key="org.checkstyle.google.suppressionfilter.config" value="checkstyle-suppressions.xml" />
+              <entry key="org.checkstyle.google.suppressionxpathfilter.config" value="checkstyle-xpath-suppressions.xml" />
             </map>
           </option>
         </ConfigurationLocation>
