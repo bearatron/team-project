@@ -19,10 +19,12 @@ public class Location {
      */
     public Location(double latitude, double longitude) {
         if (!(latitude >= -MAX_LATITUDE && latitude <= MAX_LATITUDE)) {
-            throw new IllegalArgumentException("Latitude must be within [-90, 90]: " + latitude);
+            throw new IllegalArgumentException(
+                    "Latitude must be within [-90, 90]: " + latitude);
         }
         if (!(longitude >= -MAX_LONGITUDE && longitude <= MAX_LONGITUDE)) {
-            throw new IllegalArgumentException("Longitude must be within [-180, 180]: " + longitude);
+            throw new IllegalArgumentException(
+                    "Longitude must be within [-180, 180]: " + longitude);
         }
         this.latitude = latitude;
         this.longitude = longitude;
