@@ -100,7 +100,7 @@
       <property name="query" value="/COMPACT_COMPILATION_UNIT"/>
       <message key="matchxpath.match" value="Compact source file is not allowed."/>
     </module>
-    <module name="AvoidStarImport"/>
+<!--    <module name="AvoidStarImport"/>-->
     <module name="AvoidModuleImport"/>
     <module name="OneTopLevelClass"/>
     <module name="NoLineWrap">
@@ -340,7 +340,7 @@
     <module name="CustomImportOrder">
       <property name="sortImportsInGroupAlphabetically" value="true"/>
       <property name="separateLineBetweenGroups" value="true"/>
-      <property name="customImportOrderRules" value="STATIC###THIRD_PARTY_PACKAGE"/>
+      <property name="customImportOrderRules" value="STATIC###THIRD_PARTY_PACKAGE###STANDARD_JAVA_PACKAGE"/>
     </module>
     <module name="MethodParamPad">
       <property name="tokens"
