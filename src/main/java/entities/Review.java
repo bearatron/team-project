@@ -1,13 +1,14 @@
 package entities;
 
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Validate;
+
 import java.awt.Image;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.Validate;
 
 /**
  * A review of a food truck.

@@ -1,8 +1,9 @@
 package entities;
 
+import org.apache.commons.lang3.Validate;
+
 import java.time.LocalDateTime;
 import java.util.Objects;
-import org.apache.commons.lang3.Validate;
 
 /**
  * An immutable reply to a {@link Review}.
