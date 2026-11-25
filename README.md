@@ -454,16 +454,16 @@ Data access interfaces that allow the use cases to access external services
     - name: String
     - description: String
     - price: BigDecimal (2 decimal places)
-- Review
+- Review (create with `Review.fromInApp(...)` or `Review.fromGoogleMaps(...)`)
     - author: User (type `REVIEWER`; `null` if imported from Google Maps)
-    - authorDisplayName: String (used for imported reviews)
-    - source: enum (`APP`, `GOOGLE_MAPS`)
+    - authorName: String (the author's username for in-app reviews, or the Google Maps display name for imported ones)
+    - source: ReviewSource (`APP`, `GOOGLE_MAPS`; `APP` if there is an author)
     - ratings: Map\<Category, Integer\> (each value in [1, 5], one entry per category)
         - *Note: The number of mandatory categories depends on source. `APP` requires all 4 categories to be present, while `GOOGLE_MAPS` only requires `OVERALL`*
     - text: String (optional)
-    - photos: List\<Image\> (optional, may be empty)
-    - reply: Reply (optional, at most one)
-    - timestamp: LocalDateTime (from `java.time` package)
+    - photos: List\<java.awt.Image\> (optional, may be empty)
+    - reply: Reply (optional, at most one; set once with `setReply(...)` and cannot be replaced)
+    - timePosted: LocalDateTime (from `java.time` package)
 - Reply
     - text: String
     - timestamp: LocalDateTime (from `java.time` package)
