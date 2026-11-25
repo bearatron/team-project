@@ -12,9 +12,10 @@ import org.apache.commons.lang3.Validate;
 /**
  * A review of a food truck.
  *
- * <p>A review gives a score to {@link Category#OVERALL} and to any other
- * {@link Category categories} the reviewer chooses, and may include text,
- * photos and one reply from the truck's owner.
+ * <p>An in-app review scores every {@link Category}; a review imported from
+ * Google Maps must score {@link Category#OVERALL} and may leave the others
+ * blank. A review may include text, photos and, once set, one reply from the
+ * truck's owner that cannot be replaced.
  */
 public final class Review {
 
@@ -22,7 +23,7 @@ public final class Review {
     public static final int MIN_SCORE = 1;
 
     /** The highest score a category can be given. */
-    public static final int MAX_SCORE = 10;
+    public static final int MAX_SCORE = 5;
 
     private final User author;
     private final String authorName;
@@ -30,7 +31,7 @@ public final class Review {
     private final Map<Category, Integer> ratings;
     private final String text;
     private final List<Image> photos;
-    private final Reply reply;
+    private Reply reply;
     private final LocalDateTime timePosted;
 
     /**
@@ -47,7 +48,8 @@ public final class Review {
      * @param authorDisplayName the author's name on Google Maps, or
      *     {@code null} for in-app reviews
      * @param ratings a score from {@value #MIN_SCORE} to {@value #MAX_SCORE}
-     *     for each rated category; must include {@link Category#OVERALL}
+     *     for every category in an in-app review, or at least for
+     *     {@link Category#OVERALL} in an imported review
      * @param text the review text, or {@code null} for none
      * @param photos the attached photos, or {@code null} for none
      * @param reply the owner's reply, or {@code null} for none
@@ -62,9 +64,10 @@ public final class Review {
         Validate.isTrue(hasValidAuthor(author, authorDisplayName),
                 "give exactly one of an in-app author or a non-blank "
                         + "authorDisplayName for an imported review");
-        Validate.isTrue(hasValidRatings(ratings),
-                "ratings must include OVERALL, and every score must be "
-                        + "between %d and %d", MIN_SCORE, MAX_SCORE);
+        Validate.isTrue(hasValidRatings(ratings, author != null),
+                "an in-app review must rate every category and an imported "
+                        + "review must rate OVERALL, with every score between "
+                        + "%d and %d", MIN_SCORE, MAX_SCORE);
         Validate.isTrue(hasValidPhotos(photos),
                 "photos must not contain null; pass null or an empty list "
                         + "for a review without photos");
@@ -86,7 +89,7 @@ public final class Review {
      *
      * @param author the reviewer; not {@code null}
      * @param ratings a score from {@value #MIN_SCORE} to {@value #MAX_SCORE}
-     *     for each rated category; must include {@link Category#OVERALL}
+     *     for every category
      * @param text the review text, or {@code null} for none
      * @param photos the attached photos, or {@code null} for none
      * @param timePosted when the review was posted; not {@code null}
@@ -105,7 +108,7 @@ public final class Review {
      *
      * @param authorDisplayName the name shown on Google Maps; not blank
      * @param ratings a score from {@value #MIN_SCORE} to {@value #MAX_SCORE}
-     *     for each rated category; must include {@link Category#OVERALL}
+     *     for {@link Category#OVERALL}, and optionally for other categories
      * @param text the review text, or {@code null} for none
      * @param photos the attached photos, or {@code null} for none
      * @param timePosted when the review was originally posted; not
@@ -121,28 +124,32 @@ public final class Review {
     }
 
     /**
-     * Returns a copy of this review with {@code reply} as its only reply,
-     * replacing any earlier one.
+     * Returns the owner's reply.
      *
-     * @param reply the owner's reply; not {@code null} and not posted before
-     *     this review
-     * @return the review with the reply
+     * @return the reply, or {@code null} if there is none yet
      */
-    public Review withReply(Reply reply) {
-        Validate.notNull(reply, "reply must be non-null; to get this review "
-                + "without a reply, use withoutReply() instead");
-        return new Review(author, importedName(), ratings, text, photos, reply,
-                timePosted);
+    public Reply getReply() {
+        return reply;
     }
 
     /**
-     * Returns a copy of this review with no reply.
+     * Sets the owner's reply. A review has at most one reply, and once set it
+     * cannot be replaced.
      *
-     * @return the review without a reply
+     * @param reply the owner's reply; not {@code null} and not posted before
+     *     this review
+     * @throws NullPointerException if {@code reply} is {@code null}
+     * @throws IllegalStateException if this review already has a reply
+     * @throws IllegalArgumentException if {@code reply} was posted before this
+     *     review
      */
-    public Review withoutReply() {
-        return new Review(author, importedName(), ratings, text, photos, null,
-                timePosted);
+    public void setReply(Reply reply) {
+        Validate.notNull(reply, "reply must be non-null");
+        Validate.validState(this.reply == null,
+                "this review already has a reply, and replies cannot be replaced");
+        Validate.isTrue(hasValidReply(reply, timePosted),
+                "the reply cannot be posted before the review it answers");
+        this.reply = reply;
     }
 
     /**
@@ -214,23 +221,6 @@ public final class Review {
     }
 
     /**
-     * Returns the mean score across the rated categories.
-     *
-     * @return the average score, from {@value #MIN_SCORE} to
-     *     {@value #MAX_SCORE}
-     */
-    public double getAverageScore() {
-        // The constructor requires an OVERALL rating, so there is always at
-        // least one score and the division below never divides by zero.
-        assert !ratings.isEmpty() : "a review always has at least one rating";
-        int total = 0;
-        for (int score : ratings.values()) {
-            total += score;
-        }
-        return (double) total / ratings.size();
-    }
-
-    /**
      * Returns the review text.
      *
      * @return the text, or {@code null} if there is none
@@ -249,32 +239,12 @@ public final class Review {
     }
 
     /**
-     * Returns the owner's reply.
-     *
-     * @return the reply, or {@code null} if there is none
-     */
-    public Reply getReply() {
-        return reply;
-    }
-
-    /**
      * Returns when the review was posted.
      *
      * @return the posting time
      */
     public LocalDateTime getTimePosted() {
         return timePosted;
-    }
-
-    /**
-     * Returns the name to pass back to the constructor when copying this
-     * review: the display name for imported reviews, or {@code null} for
-     * in-app reviews, whose name comes from the author.
-     *
-     * @return the imported display name, or {@code null}
-     */
-    private String importedName() {
-        return isImported() ? authorName : null;
     }
 
     /**
@@ -291,15 +261,21 @@ public final class Review {
     }
 
     /**
-     * Checks that the ratings include {@link Category#OVERALL} and that every
-     * category and score is non-null, with each score from
-     * {@value #MIN_SCORE} to {@value #MAX_SCORE}.
+     * Checks that the required categories are rated, and that every category
+     * and score is non-null with each score from {@value #MIN_SCORE} to
+     * {@value #MAX_SCORE}. An in-app review must rate every category; an
+     * imported review must rate at least {@link Category#OVERALL}.
      *
      * @param ratings the ratings to check; may be {@code null}
+     * @param inApp whether the review was posted in the app
      * @return {@code true} if the ratings are valid
      */
-    private static boolean hasValidRatings(Map<Category, Integer> ratings) {
+    private static boolean hasValidRatings(Map<Category, Integer> ratings,
+                                           boolean inApp) {
         if (ratings == null || !ratings.containsKey(Category.OVERALL)) {
+            return false;
+        }
+        if (inApp && ratings.size() != Category.values().length) {
             return false;
         }
         for (Map.Entry<Category, Integer> entry : ratings.entrySet()) {

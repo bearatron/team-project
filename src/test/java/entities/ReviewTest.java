@@ -3,7 +3,6 @@ package entities;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -16,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
 class ReviewTest {
@@ -36,14 +36,23 @@ class ReviewTest {
         return map;
     }
 
+    /** Builds ratings that give every category the same score. */
+    private static Map<Category, Integer> allCategories(int score) {
+        Map<Category, Integer> map = new HashMap<>();
+        for (Category category : Category.values()) {
+            map.put(category, score);
+        }
+        return map;
+    }
+
     private Review inApp() {
-        return Review.fromInApp(author,
-                ratings(Category.OVERALL, 9, Category.SERVICE, 8, Category.WAITING_TIME, 3),
+        return Review.fromInApp(author, ratings(Category.OVERALL, 5, Category.SERVICE, 4,
+                Category.FOOD_QUALITY, 5, Category.VALUE_FOR_MONEY, 3),
                 "Great tacos", List.of(photo), POSTED);
     }
 
     private Review googleMaps() {
-        return Review.fromGoogleMaps("Sam P.", ratings(Category.OVERALL, 7),
+        return Review.fromGoogleMaps("Sam P.", ratings(Category.OVERALL, 4),
                 "Solid", null, POSTED);
     }
 
@@ -57,6 +66,7 @@ class ReviewTest {
         assertFalse(review.isImported());
         assertEquals(author, review.getAuthor());
         assertEquals("alice", review.getAuthorName());
+        assertEquals(4, review.getRating(Category.SERVICE));
         assertEquals("Great tacos", review.getText());
         assertEquals(List.of(photo), review.getPhotos());
         assertEquals(POSTED, review.getTimePosted());
@@ -71,14 +81,15 @@ class ReviewTest {
         assertTrue(review.isImported());
         assertNull(review.getAuthor());
         assertEquals("Sam P.", review.getAuthorName());
+        assertEquals(4, review.getRating(Category.OVERALL));
+        assertNull(review.getRating(Category.SERVICE));
         assertTrue(review.getPhotos().isEmpty());
     }
 
     @Test
     void publicConstructorRestoresAReviewWithAReply() {
         Reply reply = new Reply("Thanks!", LATER);
-        Review review = new Review(author, null, ratings(Category.OVERALL, 9),
-                null, null, reply, POSTED);
+        Review review = new Review(author, null, allCategories(5), null, null, reply, POSTED);
 
         assertEquals(reply, review.getReply());
         assertFalse(review.isImported());
@@ -86,8 +97,7 @@ class ReviewTest {
 
     @Test
     void textAndPhotosAreOptional() {
-        Review review = Review.fromInApp(author, ratings(Category.OVERALL, 5),
-                null, null, POSTED);
+        Review review = Review.fromInApp(author, allCategories(3), null, null, POSTED);
 
         assertNull(review.getText());
         assertTrue(review.getPhotos().isEmpty());
@@ -95,20 +105,32 @@ class ReviewTest {
 
     // Ratings
 
-    @Test
-    void allowsRatingOverallPlusASubsetOfCategories() {
-        Review review = Review.fromInApp(author,
-                ratings(Category.OVERALL, 6, Category.CLEANLINESS, 10), null, null, POSTED);
+    @ParameterizedTest
+    @EnumSource(Category.class)
+    void inAppReviewMustRateEveryCategory(Category missing) {
+        Map<Category, Integer> ratings = allCategories(3);
+        ratings.remove(missing);
 
-        assertEquals(10, review.getRating(Category.CLEANLINESS));
-        assertNull(review.getRating(Category.SERVICE));
-        assertEquals(2, review.getRatings().size());
+        assertThrows(IllegalArgumentException.class,
+                () -> Review.fromInApp(author, ratings, null, null, POSTED));
     }
 
     @Test
-    void requiresAnOverallRating() {
-        assertThrows(IllegalArgumentException.class, () -> Review.fromInApp(author,
-                ratings(Category.SERVICE, 8), null, null, POSTED));
+    void googleMapsReviewNeedsOnlyOverall() {
+        assertEquals(1, googleMaps().getRatings().size());
+        assertThrows(IllegalArgumentException.class, () -> Review.fromGoogleMaps("Sam",
+                ratings(Category.SERVICE, 4), null, null, POSTED));
+    }
+
+    @Test
+    void googleMapsReviewMayRateOtherCategoriesToo() {
+        Review review = Review.fromGoogleMaps("Sam", allCategories(2), null, null, POSTED);
+
+        assertEquals(Category.values().length, review.getRatings().size());
+    }
+
+    @Test
+    void rejectsMissingOrEmptyRatings() {
         assertThrows(IllegalArgumentException.class,
                 () -> Review.fromInApp(author, ratings(), null, null, POSTED));
         assertThrows(IllegalArgumentException.class,
@@ -116,43 +138,40 @@ class ReviewTest {
     }
 
     @ParameterizedTest
-    @ValueSource(ints = {1, 5, 10})
+    @ValueSource(ints = {1, 3, 5})
     void acceptsScoresInRange(int score) {
-        Review review = Review.fromInApp(author, ratings(Category.OVERALL, score),
-                null, null, POSTED);
+        Review review = Review.fromInApp(author, allCategories(score), null, null, POSTED);
 
         assertEquals(score, review.getRating(Category.OVERALL));
     }
 
     @ParameterizedTest
-    @ValueSource(ints = {0, 11, -1})
+    @ValueSource(ints = {0, 6, 10, -1})
     void rejectsScoresOutOfRange(int score) {
-        assertThrows(IllegalArgumentException.class, () -> Review.fromInApp(author,
-                ratings(Category.OVERALL, 5, Category.CLEANLINESS, score), null, null, POSTED));
+        Map<Category, Integer> ratings = allCategories(3);
+        ratings.put(Category.VALUE_FOR_MONEY, score);
+
+        assertThrows(IllegalArgumentException.class,
+                () -> Review.fromInApp(author, ratings, null, null, POSTED));
     }
 
     @Test
     void rejectsNullCategoriesAndScores() {
-        assertThrows(IllegalArgumentException.class, () -> Review.fromInApp(author,
-                ratings(Category.OVERALL, 5, null, 5), null, null, POSTED));
-        assertThrows(IllegalArgumentException.class, () -> Review.fromInApp(author,
-                ratings(Category.OVERALL, null), null, null, POSTED));
-    }
+        Map<Category, Integer> nullScore = allCategories(3);
+        nullScore.put(Category.SERVICE, null);
+        Map<Category, Integer> nullCategory = ratings(Category.OVERALL, 4, null, 4);
 
-    @Test
-    void averagesTheRatedCategories() {
-        Review review = Review.fromInApp(author, ratings(
-                Category.OVERALL, 10, Category.FOOD_QUALITY, 8,
-                Category.WAITING_TIME, 3), null, null, POSTED);
-
-        assertEquals(7.0, review.getAverageScore(), 1e-9);
+        assertThrows(IllegalArgumentException.class,
+                () -> Review.fromInApp(author, nullScore, null, null, POSTED));
+        assertThrows(IllegalArgumentException.class,
+                () -> Review.fromGoogleMaps("Sam", nullCategory, null, null, POSTED));
     }
 
     // Authors
 
     @Test
     void needsExactlyOneOfAuthorAndDisplayName() {
-        Map<Category, Integer> valid = ratings(Category.OVERALL, 5);
+        Map<Category, Integer> valid = allCategories(3);
 
         assertThrows(NullPointerException.class,
                 () -> Review.fromInApp(null, valid, null, null, POSTED));
@@ -168,8 +187,8 @@ class ReviewTest {
 
     @Test
     void rejectsMissingTime() {
-        assertThrows(NullPointerException.class, () -> Review.fromInApp(author,
-                ratings(Category.OVERALL, 5), null, null, null));
+        assertThrows(NullPointerException.class,
+                () -> Review.fromInApp(author, allCategories(3), null, null, null));
     }
 
     @Test
@@ -187,7 +206,7 @@ class ReviewTest {
     @Test
     void rejectsNullPhotos() {
         assertThrows(IllegalArgumentException.class, () -> Review.fromInApp(author,
-                ratings(Category.OVERALL, 5), null, Arrays.asList(photo, null), POSTED));
+                allCategories(3), null, Arrays.asList(photo, null), POSTED));
     }
 
     @Test
@@ -195,7 +214,7 @@ class ReviewTest {
         Review review = inApp();
 
         assertThrows(UnsupportedOperationException.class,
-                () -> review.getRatings().put(Category.CLEANLINESS, 1));
+                () -> review.getRatings().put(Category.SERVICE, 1));
         assertThrows(UnsupportedOperationException.class,
                 () -> review.getPhotos().add(photo));
     }
@@ -203,56 +222,56 @@ class ReviewTest {
     // Replies
 
     @Test
-    void withReplyAddsOrReplacesTheOnlyReply() {
+    void setReplyAddsTheReply() {
+        Review review = inApp();
+        Reply reply = new Reply("Thanks!", LATER);
+
+        review.setReply(reply);
+
+        assertEquals(reply, review.getReply());
+    }
+
+    @Test
+    void replyCannotBeReplaced() {
+        Review review = inApp();
         Reply first = new Reply("Thanks!", LATER);
-        Reply second = new Reply("Thanks again!", LATER.plusMinutes(5));
+        review.setReply(first);
 
-        Review replied = inApp().withReply(first);
-        assertEquals(first, replied.getReply());
-        assertEquals(second, replied.withReply(second).getReply());
+        assertThrows(IllegalStateException.class,
+                () -> review.setReply(new Reply("Thanks again!", LATER.plusMinutes(5))));
+        assertEquals(first, review.getReply());
     }
 
     @Test
-    void withReplyKeepsEverythingElseAndLeavesTheOriginalUnchanged() {
-        Review original = inApp();
-        Review replied = original.withReply(new Reply("Thanks!", LATER));
+    void restoredReplyCannotBeReplacedEither() {
+        Review review = new Review(author, null, allCategories(5), null, null,
+                new Reply("Thanks!", LATER), POSTED);
 
-        assertNull(original.getReply());
-        assertEquals(original.getRatings(), replied.getRatings());
-        assertEquals(original.getText(), replied.getText());
-        assertEquals(original.getPhotos(), replied.getPhotos());
-        assertEquals(original.getTimePosted(), replied.getTimePosted());
-        assertEquals("alice", replied.getAuthorName());
-        assertTrue(replied.isAuthoredBy(author));
+        assertThrows(IllegalStateException.class,
+                () -> review.setReply(new Reply("Changed", LATER.plusMinutes(5))));
     }
 
     @Test
-    void googleMapsReviewsKeepTheirNameWhenRepliedTo() {
-        Review review = googleMaps().withReply(new Reply("Thanks!", LATER));
+    void googleMapsReviewsCanBeRepliedTo() {
+        Review review = googleMaps();
 
-        assertTrue(review.isImported());
-        assertEquals("Sam P.", review.getAuthorName());
+        review.setReply(new Reply("Thanks!", LATER));
+
         assertEquals("Thanks!", review.getReply().getText());
+        assertEquals("Sam P.", review.getAuthorName());
     }
 
     @Test
     void replyCannotPredateTheReview() {
+        Review review = inApp();
+
         assertThrows(IllegalArgumentException.class,
-                () -> inApp().withReply(new Reply("Thanks!", EARLIER)));
-    }
-
-    @Test
-    void withReplyRejectsNull() {
-        NullPointerException e = assertThrows(NullPointerException.class,
-                () -> inApp().withReply(null));
-        assertTrue(e.getMessage().contains("withoutReply()"));
-    }
-
-    @Test
-    void withoutReplyRemovesTheReply() {
-        Review review = inApp().withReply(new Reply("Thanks!", LATER)).withoutReply();
-
+                () -> review.setReply(new Reply("Thanks!", EARLIER)));
         assertNull(review.getReply());
-        assertSame(ReviewSource.APP, review.getSource());
+    }
+
+    @Test
+    void setReplyRejectsNull() {
+        assertThrows(NullPointerException.class, () -> inApp().setReply(null));
     }
 }
