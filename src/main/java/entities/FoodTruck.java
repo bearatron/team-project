@@ -3,6 +3,7 @@ package entities;
 import java.awt.Image;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
@@ -126,11 +127,31 @@ public class FoodTruck {
     }
 
     /**
-     * Returns the menu of a FoodTruck.
+     * Adds a menu item to this food truck's menu.
      *
-     * @return the menu of the FoodTruck.
+     * @param item the menu item to add
+     * @throws IllegalArgumentException if item is null or an item with the
+     *     same name is already on the menu
+     */
+    public void addMenuItem(MenuItem item) {
+        if (item == null) {
+            throw new IllegalArgumentException("Menu item cannot be null");
+        }
+        for (MenuItem existing : menu) {
+            if (existing.getName().equalsIgnoreCase(item.getName())) {
+                throw new IllegalArgumentException(
+                        "Menu item already exists: " + item.getName());
+            }
+        }
+        menu.add(item);
+    }
+
+    /**
+     * Returns a read-only view of this food truck's menu.
+     *
+     * @return the menu items
      */
     public List<MenuItem> getMenu() {
-        return menu;
+        return Collections.unmodifiableList(menu);
     }
 }
