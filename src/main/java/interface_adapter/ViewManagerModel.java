@@ -9,14 +9,13 @@ import java.util.List;
  */
 public class ViewManagerModel {
     private final List<ViewManagerModelListener> listeners;
-    private ViewName currentViewName;
+    private AppViewName currentAppViewName;
 
     /**
      * Creates a ViewManagerModel with no listeners and EMPTY as the current view.
      */
     public ViewManagerModel() {
         listeners = new ArrayList<>();
-        currentViewName = ViewName.EMPTY;
     }
 
     /**
@@ -24,18 +23,18 @@ public class ViewManagerModel {
      *
      * @return the current view name
      */
-    public ViewName getCurrentViewName() {
-        return this.currentViewName;
+    public AppViewName getCurrentViewName() {
+        return this.currentAppViewName;
     }
 
     /**
      * Sets the name of the view that should be shown. This does not notify listeners,
      * so callers must also call {@link #notifyViewChanged()} for the change to take effect.
      *
-     * @param currentViewName the name of the view to show
+     * @param currentAppViewName the name of the view to show
      */
-    public void setState(ViewName currentViewName) {
-        this.currentViewName = currentViewName;
+    public void setState(AppViewName currentAppViewName) {
+        this.currentAppViewName = currentAppViewName;
     }
 
     /**

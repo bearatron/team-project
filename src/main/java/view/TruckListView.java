@@ -6,11 +6,11 @@ import javax.swing.*;
 /**
  * The view that is displayed when no trucks are found.
  */
-public class NoTrucksView extends JPanel {
+public class TruckListView extends JPanel {
     /**
-     * Constructs a NoTrucksView object.
+     * Constructs a TruckListView object.
      */
-    public NoTrucksView() {
+    public TruckListView() {
         setLayout(new CardLayout());
         add(new JLabel("No trucks found", JLabel.CENTER), BorderLayout.CENTER);
     }

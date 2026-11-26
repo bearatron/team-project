@@ -1,10 +1,9 @@
 package app;
 
+import interface_adapter.AppViewName;
 import interface_adapter.ViewManagerModel;
-import interface_adapter.ViewName;
-import view.MapView;
-import view.NoTrucksView;
-import view.ViewManager;
+import interface_adapter.details.DetailsViewModel;
+import view.*;
 
 import java.awt.*;
 import javax.swing.*;
@@ -18,20 +17,22 @@ public class AppBuilder {
 
     private final JPanel appPanel;
 
-    // the left pane is always a map
+    // the left panel is always a map
     private MapView mapView;
 
-    // the right pane is a stack of cards that the ViewManager switches between
+    // the right panel is a details view showing a stack of cards that the ViewManager switches between
     private final CardLayout cardLayout;
-    private final JPanel cardPanel;
-
-    private NoTrucksView noTrucksView;
+    private final JPanel detailsViewContainer;
+    private DetailsView detailsView;
+    private DetailsViewModel detailsViewModel;
 
     private final ViewManagerModel viewManagerModel;
     private final ViewManager viewManager;
 
     /**
      * AppBuilder constructor.
+     * Adds split pane view with the map on the left the details panel on the right.
+     * The right panel being a card layout allows it to switch views.
      */
     public AppBuilder() {
         appPanel = new JPanel(new GridBagLayout());
@@ -39,21 +40,15 @@ public class AppBuilder {
         mapView = new MapView();
 
         cardLayout = new CardLayout();
-        cardPanel = new JPanel(cardLayout);
+        detailsViewContainer = new JPanel(cardLayout);
+        detailsViewModel = new DetailsViewModel();
+        JPanel testView = new TestView();
+        detailsViewContainer.add(testView);
+
+        detailsView = new DetailsView(detailsViewContainer, cardLayout, detailsViewModel);
 
         viewManagerModel = new ViewManagerModel();
-        viewManager = new ViewManager(cardPanel, cardLayout, viewManagerModel);
-    }
-
-    /**
-     * Adds the view of the list of truck as a card in the right pane.
-     *
-     * @return this builder
-     */
-    public AppBuilder addTruckListView() {
-        noTrucksView = new NoTrucksView();
-        cardPanel.add(noTrucksView, ViewName.TRUCK_LIST.name());
-        return this;
+        viewManager = new ViewManager(detailsViewContainer, cardLayout, viewManagerModel);
     }
 
     /**
@@ -75,13 +70,13 @@ public class AppBuilder {
 
         c.gridx = 1;
         c.weightx = 1 - MAP_VIEW_SIZE;
-        appPanel.add(cardPanel, c);
+        appPanel.add(detailsViewContainer, c);
 
         // 16:9 aspect ratio
         application.setMinimumSize(new Dimension(960, 540));
         application.add(appPanel);
 
-        viewManagerModel.setState(ViewName.TRUCK_LIST);
+        viewManagerModel.setState(AppViewName.DUAL_PANE);
         viewManagerModel.notifyViewChanged();
 
         return application;

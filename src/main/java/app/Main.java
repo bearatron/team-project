@@ -17,7 +17,6 @@ public class Main {
 
         // add additional builder method calls when use cases are implemented
         JFrame application = appBuilder
-                .addTruckListView()
                 .build();
         application.pack();
         application.setLocationRelativeTo(null);

@@ -58,7 +58,7 @@ Informal list of features. Details specified in [user stories](#user-stories) an
 2. followers
 3. see user's review history
 4. report a food truck
-5. analytics for food truck owners (what time views were, how many views)
+5. analytics for food truck owners (what time viewContainer were, how many viewContainer)
 6. search for a food you want
     - gather all menus and filter (preference, price)
 7. user's list of favourite food trucks
